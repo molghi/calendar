@@ -9,12 +9,19 @@
         <link rel="icon" href="./favicon.ico" type="image/x-icon" />
         <title><%= htmlWebpackPlugin.options.title %></title>
     </head>
-    <body>
+    <body style="background-color: #000">
         <div class="section">
             <div class="container">
-                <h1><%= htmlWebpackPlugin.options.title %></h1>
+                <div class="header">
+                    <h1><%= htmlWebpackPlugin.options.title %></h1>
+                </div>
 
-                <div class="app"></div>
+                <div class="app">
+                    <div class="app__column">
+                        <div class="app__calendar calendar"></div>
+                    </div>
+                    <div class="app__column"></div>
+                </div>
             </div>
         </div>
     </body>

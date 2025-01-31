@@ -1,3 +1,17 @@
 @use "./initial";
 
 // NOTE: because I import with 'use' and not 'import' (which is deprecated), I must use this syntax now: @media (max-width: #{initial.$md3}px) { ... }
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    margin-bottom: 100px;
+}
+
+// ================================================================================================
+
+.hidden {
+    display: none !important;
+}

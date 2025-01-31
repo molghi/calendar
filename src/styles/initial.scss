@@ -1,11 +1,15 @@
-$accent: #32cd32; /* slightly paler than 'lime' but brighter than 'green' */
+// $accent: #32cd32; /* slightly paler than 'lime' but brighter than 'green' */
+$accent: purple;
 $bg: #000;
 $fontsize: 16px;
 
 :root {
     --accent: #{$accent};
+    --white: #fff;
     --bg: #{$bg};
     --fontsize: #{$fontsize};
+    --dayBoxSize: 80px;
+    --dayFontSize: 25px;
 }
 
 // =============================================================================================
@@ -21,10 +25,10 @@ $fontsize: 16px;
 
 body {
     background-color: $bg;
-    color: $accent;
+    color: var(--accent);
     font-size: $fontsize;
     font-family: "Share Tech Mono", "Monaco", "Courier New", monospace, sans-serif;
-    /* text-shadow: 0 0 10px $accent; */
+    /* text-shadow: 0 0 10px var(--accent); */
 }
 
 input,
@@ -35,7 +39,7 @@ textarea {
     background-color: transparent;
     color: inherit;
     font-family: inherit;
-    border: 1px solid $accent;
+    border: 1px solid var(--accent);
     outline: none;
     padding: 10px;
     font-size: inherit;
@@ -48,17 +52,17 @@ button {
 
 input:focus,
 textarea:focus {
-    box-shadow: 0 0 10px $accent;
+    box-shadow: 0 0 10px var(--accent);
 }
 
 button:hover {
-    background-color: $accent;
+    background-color: var(--accent);
     color: $bg;
-    box-shadow: 0 0 10px $accent;
+    box-shadow: 0 0 10px var(--accent);
 }
 
 button:active {
-    box-shadow: 0 0 1px $accent;
+    box-shadow: 0 0 1px var(--accent);
 }
 
 textarea {
@@ -110,3 +114,13 @@ $md4: 479.98; // for small phones
 }
 
 // =============================================================================================
+
+h1 {
+    opacity: 0.5;
+    color: var(--accent);
+    transition: all 0.3s;
+    line-height: 1;
+    &:hover {
+        opacity: 1;
+    }
+}
