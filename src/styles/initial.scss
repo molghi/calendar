@@ -1,0 +1,112 @@
+$accent: #32cd32; /* slightly paler than 'lime' but brighter than 'green' */
+$bg: #000;
+$fontsize: 16px;
+
+:root {
+    --accent: #{$accent};
+    --bg: #{$bg};
+    --fontsize: #{$fontsize};
+}
+
+// =============================================================================================
+
+*,
+*:before,
+*:after {
+    padding: 0;
+    margin: 0;
+    border: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: $bg;
+    color: $accent;
+    font-size: $fontsize;
+    font-family: "Share Tech Mono", "Monaco", "Courier New", monospace, sans-serif;
+    /* text-shadow: 0 0 10px $accent; */
+}
+
+input,
+button,
+select,
+textarea {
+    cursor: pointer;
+    background-color: transparent;
+    color: inherit;
+    font-family: inherit;
+    border: 1px solid $accent;
+    outline: none;
+    padding: 10px;
+    font-size: inherit;
+    transition: box-shadow 0.3s;
+}
+
+button {
+    transition: all 0.3s;
+}
+
+input:focus,
+textarea:focus {
+    box-shadow: 0 0 10px $accent;
+}
+
+button:hover {
+    background-color: $accent;
+    color: $bg;
+    box-shadow: 0 0 10px $accent;
+}
+
+button:active {
+    box-shadow: 0 0 1px $accent;
+}
+
+textarea {
+    resize: vertical;
+}
+
+button {
+    cursor: pointer;
+}
+
+input::placeholder {
+    color: inherit;
+    font-family: inherit;
+    opacity: 1;
+}
+
+// =============================================================================================
+
+//  TO MAKE IT RESPONSIVE
+
+$minwidth: 320px;
+
+$mw: 1170; // the width of the content, the container width
+
+$md1: $mw + 12; // 1st breakpoint
+$md2: 992.98; // for tablets, 1024х768px is a size of a little PC monitor or iPad
+$md3: 767.98; // for large phones; less than 768px is the hamburger menu time
+$md4: 479.98; // for small phones
+
+// =============================================================================================
+
+.container {
+    max-width: $mw + px;
+    margin: 0 auto;
+    width: 100%;
+
+    @media (max-width: $md1+px) {
+        max-width: 970px;
+    }
+
+    @media (max-width: $md2+px) {
+        max-width: 750px;
+    }
+
+    @media (max-width: $md3+px) {
+        max-width: none;
+        padding: 0 10px;
+    }
+}
+
+// =============================================================================================

@@ -1,0 +1,3 @@
+@use "./initial";
+
+// NOTE: because I import with 'use' and not 'import' (which is deprecated), I must use this syntax now: @media (max-width: #{initial.$md3}px) { ... }
