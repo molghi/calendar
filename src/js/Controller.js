@@ -36,12 +36,13 @@ init();
 // running event listeners
 function runEventListeners() {
     Visual.handleCalendarClicks(calendarClicksHandler); // handle clicks in .calendar
+    Visual.handleNonCalendarClicks(otherClicksHandler); // handle clicks in .app__field
 }
 
 // ================================================================================================
 
 // handle clicks in .calendar
-function calendarClicksHandler(actionType) {
+function calendarClicksHandler(actionType, el) {
     const [myYear, myMonth] = Logic.getMonthToShow(); // fetch [year, month]
 
     if (actionType === "next") {
@@ -55,7 +56,7 @@ function calendarClicksHandler(actionType) {
         const [now, yr, mth, date, weekday, hrs, min, daysInThisMonth, monthWord, yearTime] = Logic.calcMonth(
             yearToShow,
             monthToShow
-        ); // calc how many days are in this month and return other
+        ); // calc how many days are in this month and return other things as well, ready to be rendered
         Visual.renderMonth([now, yr, mth, date, weekday, hrs, min, daysInThisMonth, monthWord, yearTime]); // rendering the month
         Logic.setMonthToShow([yearToShow, monthToShow]);
     } else if (actionType === "prev") {
@@ -69,15 +70,59 @@ function calendarClicksHandler(actionType) {
         const [now, yr, mth, date, weekday, hrs, min, daysInThisMonth, monthWord, yearTime] = Logic.calcMonth(
             yearToShow,
             monthToShow
-        ); // calc how many days are in this month and return other
+        ); // calc how many days are in this month and return other things as well, ready to be rendered
         Visual.renderMonth([now, yr, mth, date, weekday, hrs, min, daysInThisMonth, monthWord, yearTime]); // rendering the month
         Logic.setMonthToShow([yearToShow, monthToShow]);
     } else if (actionType === "now") {
         // it was a click on 'Back to Now' btn
-        const [now, yr, mth, date, weekday, hrs, min, daysInThisMonth, monthWord, yearTime] = Logic.calcMonth(); // calc how many days are in this month and return other
+        const [now, yr, mth, date, weekday, hrs, min, daysInThisMonth, monthWord, yearTime] = Logic.calcMonth(); // calc how many days are in this month and return other things as well, ready to be rendered
         Visual.renderMonth([now, yr, mth, date, weekday, hrs, min, daysInThisMonth, monthWord, yearTime]); // rendering the month
         Logic.setMonthToShow([yr, mth]);
+    } else if ((actionType === "dayClick", el)) {
+        // it was a click on some day
+        const clickedDate = el.dataset.date.split(",").reverse().join("/");
+        Visual.setClickedDay(clickedDate);
+        Visual.renderForm("event", true, clickedDate); // 'true' for 'with animation' (when rendering)
+        Visual.handleFormSubmission(formHandler);
     }
+}
+
+// ================================================================================================
+
+function otherClicksHandler(type) {
+    if (type === "occurrence") {
+        // render occurrence form
+        const clickedDate = Visual.getClickedDay();
+        Visual.renderForm("occurrence", false, clickedDate); // 'false' for 'no animation' (when rendering)
+        Visual.handleFormSubmission(formHandler);
+    } else if (type === "event") {
+        // render event form
+        const clickedDate = Visual.getClickedDay();
+        Visual.renderForm("event", false, clickedDate);
+        Visual.handleFormSubmission(formHandler);
+    }
+}
+
+// ================================================================================================
+
+function formHandler(values, type) {
+    // values is array, type is string
+    const [isValidated, safeValues, message] = Logic.validateInput(values, type); // validating input
+    // console.log(isValidated, safeValues, message);
+    if (!isValidated) return console.error(message); // showing console error if validation failed
+    Logic.addEventOccurrence(safeValues); // adding this submitted thing to state
+    Visual.removeForm(); // removing form
+    // re-rendering based on this new state
+    const thisMonthEventfulDays = Logic.getThisMonthEventfulDays(); // 'getThisMonthEventfulDays' returns a flat array of numbers
+
+    const [yearToShow, monthToShow] = Logic.getMonthToShow();
+    const [now, yr, mth, date, weekday, hrs, min, daysInThisMonth, monthWord, yearTime] = Logic.calcMonth(
+        yearToShow,
+        monthToShow
+    ); // calc how many days are in this month and return other things as well, ready to be rendered
+    Visual.renderMonth([now, yr, mth, date, weekday, hrs, min, daysInThisMonth, monthWord, yearTime], thisMonthEventfulDays); // rendering the month
+
+    // and show some notification
 }
 
 // ================================================================================================

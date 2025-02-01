@@ -4,13 +4,13 @@ import { nextIcon, prevIcon } from "./icons.js";
 
 // ================================================================================================
 
-function renderMonth([now, year, month, date, weekday, hours, minutes, daysInThisMonth, monthWord, yearTime]) {
+function renderMonth([now, year, month, date, weekday, hours, minutes, daysInThisMonth, monthWord, yearTime], arrEventfulDays) {
     const showingCurrentYear = new Date(now).getFullYear() === year;
     const showingCurrentMonth = new Date(now).getMonth() + 1 === month;
     const showingCurrentPeriod = showingCurrentYear & showingCurrentMonth; // if showingCurrentMonth and showingCurrentYear are true, then the Back to Now btn must be hidden
 
     renderCalendarHeader(year, month, monthWord, yearTime);
-    renderMonthDays(year, month, weekday, daysInThisMonth, date, Boolean(showingCurrentPeriod)); // render a rectangle filled with day boxes
+    renderMonthDays(year, month, weekday, daysInThisMonth, date, Boolean(showingCurrentPeriod), arrEventfulDays); // render a rectangle filled with day boxes
     renderNowBtn(showingCurrentPeriod);
 }
 
@@ -35,7 +35,7 @@ function renderCalendarHeader(year, month, monthWord, yearTime) {
 // ================================================================================================
 
 // render a rectangle filled with day boxes
-function renderMonthDays(year, month, weekday, daysInThisMonth, date, showingCurrentPeriod) {
+function renderMonthDays(year, month, weekday, daysInThisMonth, date, showingCurrentPeriod, arrEventfulDays) {
     if (document.querySelector(".calendar__days")) document.querySelector(".calendar__days").remove(); // removing before rendering
 
     const div = document.createElement("div");
@@ -53,10 +53,13 @@ function renderMonthDays(year, month, weekday, daysInThisMonth, date, showingCur
     const html = thisMonth
         .map((x) => {
             const emptyClass = x === "x" ? "calendar__day--empty" : "";
+            let eventClass = "";
+            if (arrEventfulDays && arrEventfulDays.length > 0)
+                eventClass = arrEventfulDays.includes(x) ? "calendar__day--eventful" : "";
             let todayClass = x === date ? "calendar__day--today" : "";
             let passedClass = x < date ? "calendar__day--passed" : "";
             if (!showingCurrentPeriod) (todayClass = ""), (passedClass = ""); // if the month to show is not the current one, no today-highlighting and no assigning the passed-day class
-            const classes = `calendar__day ${emptyClass} ${passedClass} ${todayClass}`.trim();
+            const classes = `calendar__day ${emptyClass} ${passedClass} ${todayClass} ${eventClass}`.trim();
             const content = typeof x === "number" ? x : "";
             const dateAttr = typeof x === "number" ? `data-date="${year},${month},${x}"` : "";
             return `<div class="${classes}" ${dateAttr}>
@@ -83,4 +86,79 @@ function renderNowBtn(showingCurrentPeriod) {
 
 // ================================================================================================
 
-export { renderMonth };
+// rendering the form to add/edit an event or occurrence
+function renderForm(type, animationFlag = true, clickedDate) {
+    Visual.removeForm(); // removing before re-rendering
+    const div = document.createElement("div");
+    div.classList.add("app__form-box", "invisible");
+    if (type === "event") {
+        div.innerHTML = getEventHtml(clickedDate);
+    } else {
+        div.innerHTML = getOccurrenceHtml(clickedDate);
+    }
+    Visual.appFieldBlock.appendChild(div);
+
+    if (!animationFlag) return div.classList.remove("invisible");
+
+    setTimeout(() => {
+        div.classList.remove("invisible"); // little animation
+    }, 200);
+}
+
+// ================================================================================================
+
+// dependency of 'renderForm'
+function getEventHtml(clickedDate) {
+    return `<form action="#" class="app__form">
+            <div class="app__form-header">
+                <div class="app__form-title">Add Event</div>
+                <label>A scheduled and specific activity.</label>
+                <div class="app__form-switch">
+                    <button type="button" class="app__form-switch-btn app__form-switch-btn--event active">Event</button>
+                    <button type="button" class="app__form-switch-btn app__form-switch-btn--occurrence">Occurrence</button>
+                </div>
+            </div>
+            <div class="app__form-input-box">
+                <input type="text" class="app__form-input app__form-input--title" placeholder="Title" required />
+            </div>
+            <div class="app__form-input-box">
+                <input type="text" class="app__form-input app__form-input--date" placeholder="Date" required value="${clickedDate}" />
+                <input type="text" class="app__form-input app__form-input--time" placeholder="Time (optional)" />
+            </div>
+            <div class="app__form-input-box">
+                <textarea class="app__form-input app__form-input--description" placeholder="Description (optional)"></textarea>
+            </div>
+            <button class="app__form-btn" type="submit">Add</button>
+        </form>`;
+}
+
+// ================================================================================================
+
+// dependency of 'renderForm'
+function getOccurrenceHtml(clickedDate) {
+    return `<form action="#" class="app__form">
+            <div class="app__form-header">
+                <div class="app__form-title">Add Occurrence</div>
+                <label>A general thing that happened, an activity or note.</label>
+                <div class="app__form-switch">
+                    <button type="button" class="app__form-switch-btn app__form-switch-btn--event">Event</button>
+                    <button type="button" class="app__form-switch-btn app__form-switch-btn--occurrence active">Occurrence</button>
+                </div>
+            </div>
+            <div class="app__form-input-box">
+                <input type="text" class="app__form-input app__form-input--title" placeholder="Title" required />
+            </div>
+            <div class="app__form-input-box">
+                <input type="text" class="app__form-input app__form-input--date" placeholder="Date" required value="${clickedDate}" />
+                <input type="text" class="app__form-input app__form-input--title" placeholder="Category (optional)" />
+            </div>
+            <div class="app__form-input-box">
+                <textarea class="app__form-input app__form-input--description app__form-input--description-occ" placeholder="Description (optional)"></textarea>
+            </div>
+            <button class="app__form-btn" type="submit">Add</button>
+        </form>`;
+}
+
+// ================================================================================================
+
+export { renderMonth, renderForm };

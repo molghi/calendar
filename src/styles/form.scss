@@ -1,0 +1,101 @@
+@use "./initial";
+
+// ================================================================================================
+
+.app {
+    &__form-box {
+        width: 100%;
+        padding: 10px;
+        transition: all 0.3s;
+    }
+
+    &__form {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        row-gap: 30px;
+    }
+    &__form-header {
+        position: relative;
+        label {
+            position: absolute;
+            bottom: -8px;
+            font-style: italic;
+            left: 0;
+            font-size: 14px;
+            padding-left: 10px;
+            opacity: 0.5;
+            &:hover {
+                opacity: 1;
+            }
+        }
+        @media (max-width: #{initial.$md1}px) {
+            label {
+                font-size: 11.9px;
+            }
+        }
+    }
+    &__form-title {
+        font-size: 29px;
+        padding-left: 10px;
+        margin-bottom: 10px;
+        @media (max-width: #{initial.$md1}px) {
+            padding-top: 20px;
+        }
+    }
+    &__form-switch {
+        position: absolute;
+        top: 0;
+        right: 0;
+        display: flex;
+        align-items: center;
+        @media (max-width: #{initial.$md1}px) {
+            top: -10px;
+        }
+    }
+    &__form-switch-btn {
+        padding: 5px 10px;
+        font-size: 14px;
+        transition: box-shadow 0.3s;
+    }
+    &__form-switch-btn--event {
+    }
+    &__form-switch-btn--occurence {
+    }
+    &__form-input-box {
+        display: flex;
+        column-gap: 30px;
+    }
+    &__form-input {
+        width: 100%;
+        @media (max-width: #{initial.$md1}px) {
+            font-size: 13px;
+        }
+    }
+    &__form-input--title {
+    }
+    &__form-input--date {
+    }
+    &__form-input--time {
+    }
+    &__form-input--description {
+        height: 200px;
+        min-height: 40px;
+        max-height: 290px;
+        &::placeholder {
+            color: inherit;
+        }
+        &-occ {
+            // max-height: 220px;
+        }
+        @media (max-width: #{initial.$md1}px) {
+            max-height: 270px;
+        }
+    }
+    &__form-btn {
+        font-size: 18px;
+        transition: box-shadow 0.3s;
+    }
+}
+
+// ================================================================================================

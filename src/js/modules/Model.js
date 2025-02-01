@@ -19,9 +19,22 @@ class Model {
         nowDate: [],
         monthToShow: [],
         hourlyTimer: "",
+        data: {
+            events: [],
+            occurrences: [],
+        },
     };
 
-    constructor() {}
+    constructor() {
+        console.log(this.#state);
+    }
+
+    // ================================================================================================
+
+    // get the arrays of events and occurences
+    getData = () => this.#state.data; // both arrays
+    getEvents = () => this.#state.data.events;
+    getOccurrences = () => this.#state.data.occurrences;
 
     // ================================================================================================
 
@@ -107,6 +120,99 @@ class Model {
 
     // stop the hourly timer
     stopHourlyTimer = () => clearInterval(this.#state.hourlyTimer);
+
+    // ================================================================================================
+
+    // validating form input
+    validateInput(inputValuesArr, type) {
+        /* NOTE:
+            Add form: event: title, date, time, desc
+            Add form: occurr: title, date, category, desc
+            title is a must (can contain nums or letters)
+            date is a must (can contain only nums, dots or slashes)
+            time is optional (can contain only nums and ':')
+            desc is optional (can contain whatever)
+            category is optional (can contain nums or letters)   */
+        let isValidated = true;
+        let message = "All clear";
+        let [title, date, variable, desc] = inputValuesArr; // 'variable' can be either 'time' or 'category', depends on the 'type'
+
+        if (title.trim().toLowerCase().length === 0) (isValidated = false), (message = "Title is incorrect");
+        if (date.trim().toLowerCase().length === 0) (isValidated = false), (message = "Date is incorrect");
+
+        // using regular expressions with test() to validate each input
+        if (!/^[a-zA-Z0-9\s]+$/.test(title)) (isValidated = false), (message = "Title is incorrect");
+        if (!/^[0-9./]+$/.test(date)) (isValidated = false), (message = "Date is incorrect");
+
+        // if (type === "event") {
+        //     if (!/^[0-9:]+$/.test(variable)) isValidated = false;
+        // } else {
+        //     if (!/^[a-zA-Z0-9\s]+$/.test(variable)) isValidated = false;
+        // }
+
+        let safeValues = {
+            title: title.trim().toLowerCase(),
+            date: date.trim().toLowerCase(),
+            variable: variable.trim().toLowerCase(),
+            desc: desc.trim(),
+            type: type,
+        };
+
+        // console.log(isValidated, safeValues, message);
+        return [isValidated, safeValues, message];
+    }
+
+    // ================================================================================================
+
+    // adding an event or occurrence
+    addEventOccurrence(obj) {
+        const { date, desc, title, type, variable } = obj;
+        const myObj = {
+            date,
+            description: desc,
+            title,
+            added: new Date().toISOString(),
+        };
+        if (type === "event") {
+            myObj.time = variable;
+            this.#state.data.events.push(myObj);
+        } else {
+            // type is occurrence
+            myObj.category = variable;
+            this.#state.data.occurrences.push(myObj);
+        }
+    }
+
+    // ================================================================================================
+
+    getThisMonthEventfulDays() {
+        // return just day numbers when a day of this month (which is a month that is displayed now) has either an event or occurence
+        const [yearShowing, monthShowing] = this.#state.monthToShow; // [2025, 2] -- 2 for February
+        const stateEvents = this.#state.data.events;
+        const stateOccurrences = this.#state.data.occurrences;
+
+        const eventDays =
+            stateEvents.length === 0
+                ? []
+                : stateEvents
+                      .filter((eventObj) => {
+                          const [date, month, year] = eventObj.date.split("/");
+                          if (+month === monthShowing && +year === yearShowing) return date;
+                      })
+                      .map((obj) => +obj.date.split("/")[0]); // if stateEvents is length 0, return [] -- if not, return only day numbers (dates)
+
+        const occurrenceDays =
+            stateOccurrences.length === 0
+                ? []
+                : stateOccurrences
+                      .filter((eventObj) => {
+                          const [date, month, year] = eventObj.date.split("/");
+                          if (+month === monthShowing && +year === yearShowing) return date;
+                      })
+                      .map((obj) => +obj.date.split("/")[0]); // same here
+
+        return [...eventDays, ...occurrenceDays]; // returns a flat array of numbers
+    }
 
     // ================================================================================================
 }

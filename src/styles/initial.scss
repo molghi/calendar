@@ -23,6 +23,11 @@ $fontsize: 16px;
     box-sizing: border-box;
 }
 
+html,
+body {
+    overflow: hidden;
+}
+
 body {
     background-color: $bg;
     color: var(--accent);

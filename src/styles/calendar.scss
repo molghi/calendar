@@ -79,6 +79,25 @@
                 opacity: 1;
             }
         }
+
+        &--eventful {
+            position: relative;
+            &:after {
+                content: "";
+                position: absolute;
+                top: 0;
+                right: 0;
+                border-left: 25px solid transparent;
+                border-right: 0px solid transparent;
+                border-top: 25px solid var(--accent);
+            }
+            &:hover {
+                &:after {
+                    border-top: 25px solid var(--bg);
+                }
+            }
+        }
+
         &:hover {
             background-color: var(--accent);
             box-shadow: 0 0 10px var(--accent);
