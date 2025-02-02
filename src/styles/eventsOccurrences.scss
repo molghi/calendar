@@ -1,0 +1,139 @@
+@use "./initial";
+
+.ev-occ {
+    position: relative;
+
+    &__box {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        column-gap: 20px;
+        row-gap: 10px;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+    }
+
+    &__title {
+        font-size: 25px;
+        position: relative;
+        display: inline-block;
+        span {
+            font-size: 14px;
+            position: absolute;
+            top: 0px;
+            right: -20px;
+            background-color: var(--accent);
+            color: var(--bg);
+            height: 15px;
+            width: 15px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+
+    &__items {
+        display: flex;
+        flex-direction: column;
+        row-gap: 15px;
+        max-height: 525px;
+        overflow-y: auto;
+        padding-right: 7px;
+    }
+
+    &__item {
+        padding: 10px 15px;
+        background-color: #151515;
+        position: relative;
+        &:hover {
+            background-color: #222;
+            .ev-occ__item-btns {
+                opacity: 0.5;
+                visibility: visible;
+            }
+        }
+        &-title {
+            font-size: 19px;
+        }
+        &-minor-title {
+            opacity: 0.5;
+        }
+        &-date {
+            font-size: 14px;
+        }
+        &-description {
+            font-size: 14px;
+        }
+        &-btns {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            display: flex;
+            column-gap: 10px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s;
+        }
+        &-btn {
+            padding: 0;
+            border: none;
+            transition: none;
+            // font-size: 14px;
+            svg {
+                width: 15px;
+                path {
+                    fill: var(--accent);
+                }
+            }
+            &:hover {
+                opacity: 0.5;
+                box-shadow: none;
+                background-color: transparent;
+                color: var(--accent);
+            }
+            &:active {
+                opacity: 0.3;
+            }
+        }
+    }
+
+    &__item-row {
+        margin-bottom: 5px;
+        display: flex;
+        align-items: center;
+        column-gap: 20px;
+        div {
+            flex: 1 1 50%;
+        }
+    }
+
+    &__switch {
+        display: flex;
+        align-items: center;
+        &-btn {
+            background-color: var(--bg);
+            font-size: 14px;
+            padding: 5px 7px;
+            cursor: pointer;
+            transition: box-shadow 0.3s;
+            &--ev {
+            }
+            &--occ {
+                border-left: none;
+            }
+        }
+    }
+
+    &__msg {
+        font-style: italic;
+    }
+
+    &__hint {
+        font-style: italic;
+        opacity: 0.3;
+        &:hover {
+            opacity: 1;
+        }
+    }
+}

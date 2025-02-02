@@ -1,6 +1,6 @@
 // View is responsible for everything that happens on the screen: rendering and all visual interactions with any elements
 
-import { renderMonth, renderForm } from "./view-dependencies/renderMethods.js";
+import { renderMonth, renderForm, renderEvoccBlock } from "./view-dependencies/renderMethods.js";
 import { handleCalendarClicks, handleNonCalendarClicks, handleFormSubmission } from "./view-dependencies/eventHandlers.js";
 
 class View {
@@ -73,6 +73,20 @@ class View {
     removeForm() {
         if (document.querySelector(".app__form-box")) document.querySelector(".app__form-box").remove();
     }
+
+    // ================================================================================================
+
+    renderEventsOccurrences(type, data) {
+        renderEvoccBlock(type, data);
+    }
+
+    // ================================================================================================
+
+    removeEventsOccurrences() {
+        if (document.querySelector(".ev-occ")) document.querySelector(".ev-occ").remove();
+    }
+
+    // ================================================================================================
 }
 
 export default View;

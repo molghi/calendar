@@ -28,6 +28,30 @@ class Model {
 
     // ================================================================================================
 
+    // filtering events saved to state: getting only those that are equal to month-year now shown
+    getEventsByMonth() {
+        const [yearNowRendered, monthNowRendered] = this.getMonthToShow();
+        const filtered = this.#state.data.events.filter((eventObj) => {
+            const [date, month, year] = eventObj.date.split("/");
+            if (+year === yearNowRendered && +month === monthNowRendered) return eventObj;
+        });
+        return filtered;
+    }
+
+    // ================================================================================================
+
+    // filtering occurrences saved to state: getting only those that are equal to month-year now shown
+    getOccurrencesByMonth() {
+        const [yearNowRendered, monthNowRendered] = this.getMonthToShow();
+        const filtered = this.#state.data.occurrences.filter((occObj) => {
+            const [date, month, year] = occObj.date.split("/");
+            if (+year === yearNowRendered && +month === monthNowRendered) return occObj;
+        });
+        return filtered;
+    }
+
+    // ================================================================================================
+
     // the current date
     setNowDate = (value) => (this.#state.nowDate = value); // value is [year, month, date]
     getNowDate = () => this.#state.nowDate;
@@ -213,6 +237,23 @@ class Model {
                       .map((obj) => +obj.date.split("/")[0]); // same here
 
         return [eventDays, occurrenceDays];
+    }
+
+    // ================================================================================================
+
+    // removing one entry and pushing it to LS
+    deleteEntry(type, title, date) {
+        console.log(type, title, date);
+        if (type === "events") {
+            const index = this.getEvents().findIndex((entryObj) => entryObj.title === title && entryObj.date === date); // getting the index
+            if (index < 0) return console.error("negative index: not found");
+            this.#state.data.events.splice(index, 1); // removing by index
+        } else {
+            const index = this.getOccurrences().findIndex((entryObj) => entryObj.title === title && entryObj.date === date);
+            if (index < 0) return console.error("negative index: not found");
+            this.#state.data.occurrences.splice(index, 1);
+        }
+        LS.save("calendarData", this.#state.data, "ref"); // pushing to LS; key, value, type = "ref" for reference
     }
 
     // ================================================================================================

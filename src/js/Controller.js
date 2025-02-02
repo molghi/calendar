@@ -12,6 +12,7 @@ const Visual = new View();
 
 // importing dependencies
 import calendarClicksHandler from "./modules/controller-dependencies/calendarClicksHandler.js";
+import otherClicksHandler from "./modules/controller-dependencies/otherClicksHandler.js";
 
 // ================================================================================================
 
@@ -24,6 +25,8 @@ function init() {
     // 'getThisMonthEventfulDays' returns an array of 2 arrays: event days (only dates) and occurrence days:
     const [eventDays, occurrenceDays] = Logic.getThisMonthEventfulDays();
     Visual.renderMonth([now, year, month, date, weekday, hours, minutes, daysInThisMonth, monthWord, yearTime], eventDays, occurrenceDays); // render the now month
+    const eventsData = Logic.getEventsByMonth(); // getting the data for the Events This Month block
+    Visual.renderEventsOccurrences("events", eventsData); // render the Events This Month block on the right
 
     runEventListeners();
 
@@ -33,6 +36,8 @@ function init() {
         const [now, yr, mth, date, weekday, hrs, min, daysInThisMonth, monthWord, yearTime] = Logic.calcMonth(myYear, myMonth);
         const [eventDays, occurrenceDays] = Logic.getThisMonthEventfulDays();
         Visual.renderMonth([now, yr, mth, date, weekday, hrs, min, daysInThisMonth, monthWord, yearTime], eventDays, occurrenceDays);
+        const eventsData = Logic.getEventsByMonth(); // getting the data for the Events This Month block
+        Visual.renderEventsOccurrences("events", eventsData); // render the Events This Month block on the right
     });
 }
 init();
@@ -47,26 +52,6 @@ function runEventListeners() {
 
 // ================================================================================================
 
-// handle clicks in .app__field which is where the form is
-function otherClicksHandler(type) {
-    if (type === "occurrence") {
-        // render occurrence form
-        const clickedDate = Visual.getClickedDay(); // getting the string of the date of the clicked day el
-        Visual.renderForm("occurrence", false, clickedDate); // 'false' for 'no animation' (when rendering)
-        Visual.handleFormSubmission(formHandler); // handling form submission: on submit formHandler runs
-    } else if (type === "event") {
-        // render event form
-        const clickedDate = Visual.getClickedDay(); // getting the string of the date of the clicked day el
-        Visual.renderForm("event", false, clickedDate); // 'false' for 'no animation' (when rendering)
-        Visual.handleFormSubmission(formHandler); // handling form submission: on submit formHandler runs
-    } else if (type === "close") {
-        // close/remove the form
-        Visual.removeForm();
-    }
-}
-
-// ================================================================================================
-
 // runs as a callback for 'Visual.handleFormSubmission'
 function formHandler(values, type) {
     // 'values' is array, 'type' is string
@@ -74,6 +59,11 @@ function formHandler(values, type) {
     if (!isValidated) return console.error(message); // showing console error if validation failed
     Logic.addEventOccurrence(safeValues); // adding this submitted thing to state
     Visual.removeForm(); // removing form
+
+    // and showing Events This Month
+    const eventsData = Logic.getEventsByMonth();
+    Visual.renderEventsOccurrences("events", eventsData); // render the Events This Month block on the right
+
     // re-rendering based on this new state:
     // 'getThisMonthEventfulDays' returns an array of 2 arrays: event days (only dates) and occurrence days:
     const [eventDays, occurrenceDays] = Logic.getThisMonthEventfulDays();

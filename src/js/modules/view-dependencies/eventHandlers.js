@@ -31,7 +31,7 @@ function handleCalendarClicks(handler) {
 
 // ================================================================================================
 
-// handle clicks in .app__field which is where the form is
+// handle clicks in .app__field which is where the form or the Events This Month block is
 function handleNonCalendarClicks(handler) {
     Visual.appFieldBlock.addEventListener("click", function (e) {
         if (e.target.closest(".app__form-switch-btn")) {
@@ -39,9 +39,28 @@ function handleNonCalendarClicks(handler) {
             const clickedBtnType = e.target.textContent.trim().toLowerCase();
             handler(clickedBtnType);
         }
+
         if (e.target.closest(".app__form-btn-close")) {
             // it was a click to close the form
             handler(`close`);
+        }
+
+        if (e.target.closest(".ev-occ__switch-btn")) {
+            // it was a click on Events/Occurences btn in the block to the right from Calendar
+            const clickedBtnType = e.target.textContent.trim().toLowerCase();
+            handler(clickedBtnType);
+        }
+
+        if (e.target.closest(".ev-occ__item-btn--delete")) {
+            // it was a click to delete one entry: event or occurence
+            const entryEl = e.target.closest(".ev-occ__item");
+            handler(`delete`, entryEl);
+        }
+
+        if (e.target.closest(".ev-occ__item-btn--edit")) {
+            // it was a click to edit one entry: event or occurence
+            const entryEl = e.target.closest(".ev-occ__item");
+            handler(`edit`, entryEl);
         }
     });
 }

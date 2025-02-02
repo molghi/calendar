@@ -7,16 +7,17 @@ function calendarClicksHandler(actionType, el) {
     const [myYear, myMonth] = Logic.getMonthToShow(); // fetches [year, month]
 
     if (actionType === "next") {
-        // next month btn was clicked, render next month
+        // next month btn was clicked: render next month
         showNextMonth(myYear, myMonth);
     } else if (actionType === "prev") {
-        // prev month btn was clicked, render prev month
+        // prev month btn was clicked: render prev month
         showPrevMonth(myYear, myMonth);
     } else if (actionType === "now") {
-        // it was a click on 'Back to Now' btn
+        // it was a click on 'Back to Now' btn: jump back to the now month
         backToNow();
     } else if ((actionType === "dayClick", el)) {
-        // it was a click on some day
+        // it was a click on some day: show a form to add new things
+        Visual.removeEventsOccurrences();
         const clickedDate = el.dataset.date.split(",").reverse().join("/"); // el is the day element that was clicked
         Visual.setClickedDay(clickedDate); // setting the string of the date of the clicked day
         Visual.renderForm("event", true, clickedDate); // 'true' for 'with animation' (when rendering)
@@ -36,10 +37,12 @@ function showNextMonth(myYear, myMonth) {
     }
     // calc how many days are in this month and return other things as well, ready to be rendered:
     const [now, yr, mth, date, weekday, hrs, min, daysInThisMonth, monthWord, yearTime] = Logic.calcMonth(yearToShow, monthToShow);
+    Logic.setMonthToShow([yearToShow, monthToShow]); // updating the value that stands for 'what month is now shown on the screen'
     // 'getThisMonthEventfulDays' returns an array of 2 arrays: event days (only dates) and occurrence days:
     const [eventDays, occurrenceDays] = Logic.getThisMonthEventfulDays();
     Visual.renderMonth([now, yr, mth, date, weekday, hrs, min, daysInThisMonth, monthWord, yearTime], eventDays, occurrenceDays); // rendering the month
-    Logic.setMonthToShow([yearToShow, monthToShow]); // updating the value that stands for 'what month is now shown on the screen'
+    const eventsData = Logic.getEventsByMonth(); // getting the data for the Events This Month block
+    Visual.renderEventsOccurrences("events", eventsData); // render the Events This Month block on the right
 }
 
 // ================================================================================================
@@ -54,10 +57,12 @@ function showPrevMonth(myYear, myMonth) {
     }
     // calc how many days are in this month and return other things as well, ready to be rendered:
     const [now, yr, mth, date, weekday, hrs, min, daysInThisMonth, monthWord, yearTime] = Logic.calcMonth(yearToShow, monthToShow);
+    Logic.setMonthToShow([yearToShow, monthToShow]); // updating the value that stands for 'what month is now shown on the screen'
     // 'getThisMonthEventfulDays' returns an array of 2 arrays: event days (only dates) and occurrence days:
     const [eventDays, occurrenceDays] = Logic.getThisMonthEventfulDays();
     Visual.renderMonth([now, yr, mth, date, weekday, hrs, min, daysInThisMonth, monthWord, yearTime], eventDays, occurrenceDays); // rendering the month
-    Logic.setMonthToShow([yearToShow, monthToShow]); // updating the value that stands for 'what month is now shown on the screen'
+    const eventsData = Logic.getEventsByMonth(); // getting the data for the Events This Month block
+    Visual.renderEventsOccurrences("events", eventsData); // render the Events This Month block on the right
 }
 
 // ================================================================================================
@@ -66,10 +71,12 @@ function showPrevMonth(myYear, myMonth) {
 function backToNow() {
     // calc how many days are in this month and return other things as well, ready to be rendered:
     const [now, yr, mth, date, weekday, hrs, min, daysInThisMonth, monthWord, yearTime] = Logic.calcMonth();
+    Logic.setMonthToShow([yr, mth]); // updating the value that stands for 'what month is now shown on the screen'
     // 'getThisMonthEventfulDays' returns an array of 2 arrays: event days (only dates) and occurrence days:
     const [eventDays, occurrenceDays] = Logic.getThisMonthEventfulDays();
     Visual.renderMonth([now, yr, mth, date, weekday, hrs, min, daysInThisMonth, monthWord, yearTime], eventDays, occurrenceDays); // rendering the month
-    Logic.setMonthToShow([yr, mth]); // updating the value that stands for 'what month is now shown on the screen'
+    const eventsData = Logic.getEventsByMonth(); // getting the data for the Events This Month block
+    Visual.renderEventsOccurrences("events", eventsData); // render the Events This Month block on the right
 }
 
 // ================================================================================================
