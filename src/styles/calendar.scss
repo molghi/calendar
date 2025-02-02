@@ -22,6 +22,8 @@
         box-shadow: 0 0 1px var(--accent);
         transition: box-shadow 0.3s;
         cursor: pointer;
+        position: relative;
+
         span {
             // color: var(--white);
         }
@@ -80,21 +82,55 @@
             }
         }
 
-        &--eventful {
-            position: relative;
+        span.calendar__day--eventful {
+            position: absolute;
+            top: 0;
+            right: 0;
+            color: var(--bg);
+            font-size: 16px;
+            z-index: 5;
             &:after {
                 content: "";
                 position: absolute;
+                z-index: -1;
                 top: 0;
                 right: 0;
                 border-left: 25px solid transparent;
                 border-right: 0px solid transparent;
                 border-top: 25px solid var(--accent);
             }
-            &:hover {
+        }
+
+        &:hover {
+            span.calendar__day--eventful {
+                color: var(--accent);
                 &:after {
                     border-top: 25px solid var(--bg);
                 }
+            }
+        }
+
+        span.calendar__day--occurence {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            color: var(--bg);
+            z-index: 5;
+            font-size: 16px;
+            width: 22px;
+            height: 22px;
+            background-color: var(--white);
+            box-shadow: 0 0 10px var(--white);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        &:hover {
+            span.calendar__day--occurence {
+                color: var(--white);
+                background-color: var(--bg);
+                box-shadow: 0 0 10px var(--bg);
             }
         }
 

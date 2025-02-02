@@ -31,7 +31,7 @@ function handleCalendarClicks(handler) {
 
 // ================================================================================================
 
-// handle clicks in .app__field
+// handle clicks in .app__field which is where the form is
 function handleNonCalendarClicks(handler) {
     Visual.appFieldBlock.addEventListener("click", function (e) {
         if (e.target.closest(".app__form-switch-btn")) {
@@ -39,11 +39,16 @@ function handleNonCalendarClicks(handler) {
             const clickedBtnType = e.target.textContent.trim().toLowerCase();
             handler(clickedBtnType);
         }
+        if (e.target.closest(".app__form-btn-close")) {
+            // it was a click to close the form
+            handler(`close`);
+        }
     });
 }
 
 // ================================================================================================
 
+// handle form submission (when adding events)
 function handleFormSubmission(handler) {
     document.querySelector("form").addEventListener("submit", function (e) {
         e.preventDefault();

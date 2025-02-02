@@ -40,13 +40,14 @@
         padding-left: 10px;
         margin-bottom: 10px;
         @media (max-width: #{initial.$md1}px) {
-            padding-top: 20px;
+            // padding-top: 20px;
+            padding-top: 25px;
         }
     }
     &__form-switch {
         position: absolute;
         top: 0;
-        right: 0;
+        right: 35px;
         display: flex;
         align-items: center;
         @media (max-width: #{initial.$md1}px) {
@@ -95,6 +96,34 @@
     &__form-btn {
         font-size: 18px;
         transition: box-shadow 0.3s;
+    }
+    &__form-btn-close {
+        position: absolute;
+        z-index: 1;
+        top: 3px;
+        right: 0;
+        padding: 0;
+        border: none;
+        cursor: pointer;
+        opacity: 0.5;
+        transition: box-shadow 0.3s;
+        svg {
+            width: 22px;
+            path {
+                fill: var(--accent);
+            }
+        }
+        &:hover {
+            opacity: 1;
+            background-color: var(--bg);
+            box-shadow: none;
+        }
+        &:active {
+            opacity: 0.5;
+        }
+        @media (max-width: #{initial.$md1}px) {
+            top: -6px;
+        }
     }
 }
 

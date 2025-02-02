@@ -1,21 +1,10 @@
 // Model is responsible for all logic in the app: all computations, calculations, and data operations
 
+import LS from "./model-dependencies/localStorage.js";
+
 class Model {
     #state = {
-        months: [
-            "January",
-            "February",
-            "March",
-            "April",
-            "May",
-            "June",
-            "July",
-            "August",
-            "September",
-            "October",
-            "November",
-            "December",
-        ],
+        months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
         nowDate: [],
         monthToShow: [],
         hourlyTimer: "",
@@ -26,6 +15,7 @@ class Model {
     };
 
     constructor() {
+        this.fetchEventOccurrences(); // fetching from LS
         console.log(this.#state);
     }
 
@@ -175,12 +165,23 @@ class Model {
         };
         if (type === "event") {
             myObj.time = variable;
-            this.#state.data.events.push(myObj);
+            this.#state.data.events.push(myObj); // pushing to state
         } else {
             // type is occurrence
             myObj.category = variable;
-            this.#state.data.occurrences.push(myObj);
+            this.#state.data.occurrences.push(myObj); // pushing to state
         }
+
+        LS.save("calendarData", this.#state.data, "ref"); // pushing to LS; key, value, type = "ref" for reference
+    }
+
+    // ================================================================================================
+
+    fetchEventOccurrences() {
+        const fetched = LS.get("calendarData", "ref"); // key, type
+        if (!fetched) return;
+        this.#state.data.events = fetched.events;
+        this.#state.data.occurrences = fetched.occurrences;
     }
 
     // ================================================================================================
@@ -211,7 +212,7 @@ class Model {
                       })
                       .map((obj) => +obj.date.split("/")[0]); // same here
 
-        return [...eventDays, ...occurrenceDays]; // returns a flat array of numbers
+        return [eventDays, occurrenceDays];
     }
 
     // ================================================================================================

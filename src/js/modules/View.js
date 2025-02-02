@@ -26,8 +26,8 @@ class View {
     // ================================================================================================
 
     // render the month element in .calendar
-    renderMonth(arr, arrEventfulDays) {
-        renderMonth(arr, arrEventfulDays);
+    renderMonth(arr, arrEventfulDays, eventDaysArr, occDaysArr) {
+        renderMonth(arr, arrEventfulDays, eventDaysArr, occDaysArr);
     }
 
     // ================================================================================================
