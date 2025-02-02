@@ -1,4 +1,5 @@
 import { Logic, Visual, formHandler } from "../../Controller.js";
+import View from "../View.js";
 
 // ================================================================================================
 
@@ -63,7 +64,18 @@ function deleteOneEntry(el) {
 
 // dependency of 'otherClicksHandler'
 function editOneEntry(el) {
-    console.log(`edit`, el);
+    const itemTitle = el.querySelector(".ev-occ__item-title").textContent.toLowerCase().trim(); // getting the event title
+    const itemDate = el.querySelector(".ev-occ__item-date").textContent.toLowerCase().trim(); // and its date
+    const itemType = [...document.querySelectorAll(".ev-occ__switch-btn")]
+        .find((x) => x.classList.contains("active"))
+        .textContent.toLowerCase()
+        .trim(); // determining if it was an event or occurrence
+    const itemData = Logic.getEntryData(itemTitle, itemDate, itemType); // getting all the data of 'el' from the state: 4 of its props
+    Logic.setEditingItem(itemTitle, itemDate, itemType); // setting what item I am editing now in case if I modify all of its fields: to be able to find it then in state
+    Visual.removeEventsOccurrences(); // removing the Evs/Occs block
+    Visual.renderForm("event", true, itemData.date, "edit"); // showing the form and making it the Edit form ('edit' param) -- 'true' for 'with animation' (when rendering)
+    Visual.populateForm(itemData); // putting the data of the clicked ev/occ in the fields of that Edit form
+    Visual.handleFormSubmission(formHandler); // handling that form submission
 }
 
 // ================================================================================================

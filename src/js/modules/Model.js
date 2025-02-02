@@ -12,6 +12,7 @@ class Model {
             events: [],
             occurrences: [],
         },
+        editingItem: "",
     };
 
     constructor() {
@@ -201,6 +202,25 @@ class Model {
 
     // ================================================================================================
 
+    // editing an event or occurrence
+    editEventOccurrence(obj) {
+        const [editingItemType, editingItem] = this.getEditingItem();
+
+        // editing:
+        if (obj.title !== editingItem.title) editingItem.title = obj.title;
+        if (obj.date !== editingItem.date) editingItem.date = obj.date;
+        if (obj.desc !== editingItem.description) editingItem.description = obj.desc;
+        if (editingItemType === "events") {
+            if (obj.variable !== editingItem.time) editingItem.time = obj.variable;
+        } else {
+            if (obj.variable !== editingItem.category) editingItem.category = obj.variable;
+        }
+
+        LS.save("calendarData", this.#state.data, "ref"); // pushing to LS; key, value, type = "ref" for reference
+    }
+
+    // ================================================================================================
+
     fetchEventOccurrences() {
         const fetched = LS.get("calendarData", "ref"); // key, type
         if (!fetched) return;
@@ -255,6 +275,26 @@ class Model {
         }
         LS.save("calendarData", this.#state.data, "ref"); // pushing to LS; key, value, type = "ref" for reference
     }
+
+    // ================================================================================================
+
+    // getting all the data of 'el' from the state: 4 of its props
+    getEntryData(title, date, type) {
+        const itemData = this.#state.data[type].find((itemObj) => itemObj.title === title && itemObj.date === date);
+        const copy = JSON.parse(JSON.stringify(itemData)); // making a copy because '.find' returns a ref to the object found within the orig array, not a newly created object
+        delete copy.added; // deleting what I don't need to return
+        return copy;
+    }
+
+    // ================================================================================================
+
+    // setting what item I am editing now in case if I modify all of its fields: to be able to find it then in state
+    setEditingItem(title, date, type) {
+        const item = this.#state.data[type].find((itemObj) => itemObj.title === title && itemObj.date === date);
+        this.#state.editingItem = [type, item];
+    }
+
+    getEditingItem = () => this.#state.editingItem;
 
     // ================================================================================================
 }

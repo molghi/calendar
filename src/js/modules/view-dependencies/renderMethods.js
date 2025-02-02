@@ -108,14 +108,14 @@ function renderNowBtn(showingCurrentPeriod) {
 // ================================================================================================
 
 // general function -- rendering the form to add an event or occurrence
-function renderForm(type, animationFlag = true, clickedDate) {
+function renderForm(type, animationFlag = true, clickedDate, formType) {
     Visual.removeForm(); // removing before re-rendering
     const div = document.createElement("div");
     div.classList.add("app__form-box", "invisible");
     if (type === "event") {
-        div.innerHTML = getEventHtml(clickedDate);
+        div.innerHTML = getEventHtml(clickedDate, formType);
     } else {
-        div.innerHTML = getOccurrenceHtml(clickedDate);
+        div.innerHTML = getOccurrenceHtml(clickedDate, formType);
     }
     Visual.appFieldBlock.appendChild(div);
 
@@ -129,16 +129,24 @@ function renderForm(type, animationFlag = true, clickedDate) {
 // ================================================================================================
 
 // dependency of 'renderForm'
-function getEventHtml(clickedDate) {
-    return `<form action="#" class="app__form">
-            <button class="app__form-btn-close" type="button">${crossIcon}</button>
-            <div class="app__form-header">
-                <div class="app__form-title">Add Event</div>
-                <label>A scheduled and specific activity.</label>
-                <div class="app__form-switch">
+function getEventHtml(clickedDate, type = "add") {
+    const btns =
+        type === "add"
+            ? `<div class="app__form-switch">
                     <button type="button" class="app__form-switch-btn app__form-switch-btn--event active">Event</button>
                     <button type="button" class="app__form-switch-btn app__form-switch-btn--occurrence">Occurrence</button>
-                </div>
+                </div>`
+            : "";
+    const title = type === "add" ? "Add Event" : "Edit Event";
+    const submitBtn = type === "add" ? "Add" : "Edit";
+    const formClass = type === "add" ? `app__form--add` : `app__form--edit`;
+
+    return `<form action="#" class="app__form  ${formClass}">
+            <button class="app__form-btn-close" type="button">${crossIcon}</button>
+            <div class="app__form-header">
+                <div class="app__form-title">${title}</div>
+                <label>A scheduled and specific activity.</label>
+                ${btns}
             </div>
             <div class="app__form-input-box">
                 <input type="text" class="app__form-input app__form-input--title" placeholder="Title" required />
@@ -150,23 +158,31 @@ function getEventHtml(clickedDate) {
             <div class="app__form-input-box">
                 <textarea class="app__form-input app__form-input--description" placeholder="Description (optional)"></textarea>
             </div>
-            <button class="app__form-btn" type="submit">Add</button>
+            <button class="app__form-btn" type="submit">${submitBtn}</button>
         </form>`;
 }
 
 // ================================================================================================
 
 // dependency of 'renderForm'
-function getOccurrenceHtml(clickedDate) {
-    return `<form action="#" class="app__form">
-            <button class="app__form-btn-close" type="button">${crossIcon}</button>
-            <div class="app__form-header">
-                <div class="app__form-title">Add Occurrence</div>
-                <label>A general thing that happened, an activity or note.</label>
-                <div class="app__form-switch">
+function getOccurrenceHtml(clickedDate, type = "add") {
+    const btns =
+        type === "add"
+            ? `<div class="app__form-switch">
                     <button type="button" class="app__form-switch-btn app__form-switch-btn--event">Event</button>
                     <button type="button" class="app__form-switch-btn app__form-switch-btn--occurrence active">Occurrence</button>
-                </div>
+                </div>`
+            : "";
+    const title = type === "add" ? "Add Occurrence" : "Edit Occurrence";
+    const submitBtn = type === "add" ? "Add" : "Edit";
+    const formClass = type === "add" ? `app__form--add` : `app__form--edit`;
+
+    return `<form action="#" class="app__form ${formClass}">
+            <button class="app__form-btn-close" type="button">${crossIcon}</button>
+            <div class="app__form-header">
+                <div class="app__form-title">${title}</div>
+                <label>A general thing that happened, an activity or note.</label>
+                ${btns}
             </div>
             <div class="app__form-input-box">
                 <input type="text" class="app__form-input app__form-input--title" placeholder="Title" required />
@@ -178,7 +194,7 @@ function getOccurrenceHtml(clickedDate) {
             <div class="app__form-input-box">
                 <textarea class="app__form-input app__form-input--description app__form-input--description-occ" placeholder="Description (optional)"></textarea>
             </div>
-            <button class="app__form-btn" type="submit">Add</button>
+            <button class="app__form-btn" type="submit">${submitBtn}</button>
         </form>`;
 }
 
@@ -310,4 +326,23 @@ function returnOccurencesBlock(data) {
 
 // ================================================================================================
 
-export { renderMonth, renderForm, renderEvoccBlock };
+function renderMessage(type, text) {
+    Visual.removeMessages(); // removing before re-rendering
+    const div = document.createElement("div");
+    const typeClass = type === "success" ? "success" : type === "notification" ? "notification" : "error";
+    div.classList.add("message", "invisible", "moved-down", typeClass);
+    div.innerHTML = `<div>${text}</div>`;
+    Visual.containerEl.appendChild(div);
+
+    setTimeout(() => {
+        div.classList.remove("invisible", "moved-down");
+    }, 300);
+
+    setTimeout(() => {
+        Visual.removeMessages();
+    }, 3000);
+}
+
+// ================================================================================================
+
+export { renderMonth, renderForm, renderEvoccBlock, renderMessage };

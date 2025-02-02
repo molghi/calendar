@@ -103,6 +103,7 @@ $md4: 479.98; // for small phones
     max-width: $mw + px;
     margin: 0 auto;
     width: 100%;
+    position: relative;
 
     @media (max-width: $md1+px) {
         max-width: 970px;

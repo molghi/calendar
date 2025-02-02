@@ -1,12 +1,13 @@
 // View is responsible for everything that happens on the screen: rendering and all visual interactions with any elements
 
-import { renderMonth, renderForm, renderEvoccBlock } from "./view-dependencies/renderMethods.js";
+import { renderMonth, renderForm, renderEvoccBlock, renderMessage } from "./view-dependencies/renderMethods.js";
 import { handleCalendarClicks, handleNonCalendarClicks, handleFormSubmission } from "./view-dependencies/eventHandlers.js";
 
 class View {
     constructor() {
         this.calendarBlock = document.querySelector(".calendar");
         this.appFieldBlock = document.querySelector(".app__field");
+        this.containerEl = document.querySelector(".container");
         this.clickedDay = "";
     }
 
@@ -46,8 +47,8 @@ class View {
 
     // ================================================================================================
 
-    renderForm(type, animationFlag, clickedDate) {
-        renderForm(type, animationFlag, clickedDate);
+    renderForm(type, animationFlag, clickedDate, formType) {
+        renderForm(type, animationFlag, clickedDate, formType);
         setTimeout(() => {
             document.querySelector(".app__form-input--title").focus();
         }, 250);
@@ -84,6 +85,28 @@ class View {
 
     removeEventsOccurrences() {
         if (document.querySelector(".ev-occ")) document.querySelector(".ev-occ").remove();
+    }
+
+    // ================================================================================================
+
+    // when editing: putting the data of the clicked ev/occ in the fields of that Edit form
+    populateForm(obj) {
+        document.querySelector(".app__form-input--title").value = obj.title;
+        document.querySelector(".app__form-input--date").value = obj.date;
+        if (obj.time) document.querySelector(".app__form-input--time").value = obj.time;
+        if (obj.description) document.querySelector(".app__form-input--description").value = obj.description;
+    }
+
+    // ================================================================================================
+
+    showMessage(type, text) {
+        renderMessage(type, text);
+    }
+
+    // ================================================================================================
+
+    removeMessages() {
+        if (document.querySelector(".message")) document.querySelector(".message").remove();
     }
 
     // ================================================================================================

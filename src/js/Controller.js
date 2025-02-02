@@ -53,18 +53,25 @@ function runEventListeners() {
 // ================================================================================================
 
 // runs as a callback for 'Visual.handleFormSubmission'
-function formHandler(values, type) {
-    // 'values' is array, 'type' is string
+function formHandler(values, type, formType) {
+    // NOTE: 'values' is array, 'type' is string, 'formType' is either 'editForm' or 'addForm'
     const [isValidated, safeValues, message] = Logic.validateInput(values, type); // validating input
-    if (!isValidated) return console.error(message); // showing console error if validation failed
-    Logic.addEventOccurrence(safeValues); // adding this submitted thing to state
+    if (!isValidated) {
+        console.error(message); // showing message if validation failed
+        Visual.showMessage("error", message); // showing some notification in the UI
+        return;
+    }
+    if (formType === "addForm") {
+        Logic.addEventOccurrence(safeValues); // adding this submitted thing to state and pushing to LS
+    } else {
+        Logic.editEventOccurrence(safeValues); // editing in state and pushing to LS
+    }
     Visual.removeForm(); // removing form
 
-    // and showing Events This Month
-    const eventsData = Logic.getEventsByMonth();
-    Visual.renderEventsOccurrences("events", eventsData); // render the Events This Month block on the right
+    const eventsData = Logic.getEventsByMonth(); // showing the 'Events This Month' block
+    Visual.renderEventsOccurrences("events", eventsData); // rendering the Events This Month block on the right
 
-    // re-rendering based on this new state:
+    // re-rendering Calendar based on this new state:
     // 'getThisMonthEventfulDays' returns an array of 2 arrays: event days (only dates) and occurrence days:
     const [eventDays, occurrenceDays] = Logic.getThisMonthEventfulDays();
 
@@ -73,7 +80,8 @@ function formHandler(values, type) {
     const [now, yr, mth, date, weekday, hrs, min, daysInThisMonth, monthWord, yearTime] = Logic.calcMonth(yearToShow, monthToShow);
     Visual.renderMonth([now, yr, mth, date, weekday, hrs, min, daysInThisMonth, monthWord, yearTime], eventDays, occurrenceDays); // rendering the month
 
-    // and show some notification
+    const messageToShow = formType === "addForm" ? "Added successfully!" : "Edited successfully!";
+    Visual.showMessage("success", messageToShow); // showing some notification in the UI
 }
 
 // ================================================================================================

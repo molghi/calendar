@@ -71,8 +71,9 @@ function handleNonCalendarClicks(handler) {
 function handleFormSubmission(handler) {
     document.querySelector("form").addEventListener("submit", function (e) {
         e.preventDefault();
-        const [values, type] = Visual.readInputs();
-        handler(values, type);
+        const formType = this.classList.contains("app__form--edit") ? "editForm" : "addForm"; // determining if it was the edit form or the add form
+        const [values, type] = Visual.readInputs(); // reading the current input values
+        handler(values, type, formType);
     });
 }
 
