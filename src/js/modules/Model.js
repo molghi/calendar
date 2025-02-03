@@ -2,9 +2,12 @@
 
 import LS from "./model-dependencies/localStorage.js";
 
+import { differenceInDays, differenceInMonths, differenceInYears, formatDistanceStrict } from "date-fns";
+
 class Model {
     #state = {
         months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+        weekdays: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
         nowDate: [],
         monthToShow: [],
         hourlyTimer: "",
@@ -284,6 +287,73 @@ class Model {
         const copy = JSON.parse(JSON.stringify(itemData)); // making a copy because '.find' returns a ref to the object found within the orig array, not a newly created object
         delete copy.added; // deleting what I don't need to return
         return copy;
+    }
+
+    // ================================================================================================
+
+    getDayData(date) {
+        // 'date' is a string like '28/2/2025'
+        const eventsThisDay = this.getEvents().filter((eventObj) => eventObj.date === date);
+        const occsThisDay = this.getOccurrences().filter((occObj) => occObj.date === date);
+        const temporalDistance = this.calcTemporalDistance(date);
+        return [eventsThisDay, occsThisDay, temporalDistance];
+    }
+
+    // ================================================================================================
+
+    /*calcTemporalDistance(dateString) {
+        ALL OF THIS IS JUST BLAZING RUBBISH
+        const [now, year, month, date, weekday, hours, minutes] = this.getNowTime();
+        const nowTime = now.getTime();
+        const [anotherDate, anotherMonth, anotherYear] = dateString.split("/").map((x) => +x); // 'someDate' is a string like '28/2/2025'
+        const targetDate = new Date(anotherYear, anotherMonth - 1, anotherDate);
+
+        const anotherTime = new Date(anotherYear, anotherMonth - 1, anotherDate, 0, 0).getTime();
+        const difference = (anotherTime - nowTime) / (1000 * 60 * 60 * 24); // in days
+        const daysRaw = Math.round(difference); // 'difference' in days
+
+        let yearsDifference = targetDate.getFullYear() - now.getFullYear();
+        let monthsDifference = targetDate.getMonth() - now.getMonth();
+        let daysDifference = targetDate.getDate() - now.getDate();
+
+        // Adjust negative days
+        if (daysDifference < 0) {
+            const prevMonthDays = new Date(targetDate.getFullYear(), targetDate.getMonth(), 0).getDate();
+            daysDifference += prevMonthDays;
+            monthsDifference -= 1; // Borrow from the previous month
+        }
+
+        // Adjust negative months
+        if (monthsDifference < 0) {
+            monthsDifference += 12;
+            yearsDifference -= 1; // Borrow from the previous year
+        }
+
+        // Calculate total days between now and target date
+        const totalDays = Math.round((targetDate - now) / (1000 * 60 * 60 * 24));
+
+        // *** Correct weeks and days ***
+        const weeksDifference = Math.floor(totalDays / 7); // Number of full weeks
+        const remainingDays = totalDays % 7; // Remaining days after full weeks
+
+        // *** Return all the results ***
+        console.log([daysRaw, yearsDifference, monthsDifference, weeksDifference, remainingDays]);
+        return [daysRaw, yearsDifference, monthsDifference, weeksDifference, remainingDays];
+    }*/
+
+    calcTemporalDistance(dateString) {
+        const now = new Date();
+        const [day, month, year] = dateString.split("/").map(Number);
+        const targetDate = new Date(year, month - 1, day);
+
+        // Calculate differences using date-fns functions
+        let years = differenceInYears(targetDate, now);
+        let months = differenceInMonths(targetDate, now) % 12; // Remaining months after years
+        let totalDays = differenceInDays(targetDate, now);
+        let weeks = Math.floor(totalDays / 7); // Full weeks
+        let days = totalDays % 7; // Remaining days after full weeks
+
+        return [totalDays, years, months, weeks, days]; // Return the result as an array
     }
 
     // ================================================================================================

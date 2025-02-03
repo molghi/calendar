@@ -1,7 +1,13 @@
 // View is responsible for everything that happens on the screen: rendering and all visual interactions with any elements
 
-import { renderMonth, renderForm, renderEvoccBlock, renderMessage } from "./view-dependencies/renderMethods.js";
-import { handleCalendarClicks, handleNonCalendarClicks, handleFormSubmission } from "./view-dependencies/eventHandlers.js";
+import { renderDayBlock, renderMonth, renderForm, renderEvoccBlock, renderMessage } from "./view-dependencies/renderMethods.js";
+import {
+    handleCalendarClicks,
+    handleNonCalendarClicks,
+    handleFormSubmission,
+    handleCalendarHoversIn,
+    handleCalendarHoversOut,
+} from "./view-dependencies/eventHandlers.js";
 
 class View {
     constructor() {
@@ -107,6 +113,44 @@ class View {
 
     removeMessages() {
         if (document.querySelector(".message")) document.querySelector(".message").remove();
+    }
+
+    // ================================================================================================
+
+    handleCalendarHoversIn(handler) {
+        handleCalendarHoversIn(handler);
+    }
+
+    // ================================================================================================
+
+    handleCalendarHoversOut(handler) {
+        handleCalendarHoversOut(handler);
+    }
+
+    // ================================================================================================
+
+    makeDimmer(el, flag = "dimmer") {
+        if (flag === "dimmer") {
+            // making the 'el' dimmer
+            // el.classList.add("dimmer");
+            el.classList.add("invisible");
+        } else {
+            // restoring the state
+            // el.classList.remove("dimmer");
+            el.classList.remove("invisible");
+        }
+    }
+
+    // ================================================================================================
+
+    renderDayBlock(date, eventsThisDay, occsThisDay, tempDist) {
+        renderDayBlock(date, eventsThisDay, occsThisDay, tempDist);
+    }
+
+    // ================================================================================================
+
+    removeDayBlock() {
+        if (document.querySelector(".day-block__box")) document.querySelector(".day-block__box").remove();
     }
 
     // ================================================================================================

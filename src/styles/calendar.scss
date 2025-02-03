@@ -26,6 +26,7 @@
 
         span {
             // color: var(--white);
+            pointer-events: none;
         }
 
         &--empty {

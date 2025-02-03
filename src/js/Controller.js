@@ -48,6 +48,8 @@ init();
 function runEventListeners() {
     Visual.handleCalendarClicks(calendarClicksHandler); // handle clicks in .calendar
     Visual.handleNonCalendarClicks(otherClicksHandler); // handle clicks in .app__field which is where the form is
+    Visual.handleCalendarHoversIn(handleCalendarHoversIn); // handle hover-ins over days in Calendar
+    Visual.handleCalendarHoversOut(handleCalendarHoversOut); // handle hover-outs over days in Calendar
 }
 
 // ================================================================================================
@@ -82,6 +84,26 @@ function formHandler(values, type, formType) {
 
     const messageToShow = formType === "addForm" ? "Added successfully!" : "Edited successfully!";
     Visual.showMessage("success", messageToShow); // showing some notification in the UI
+}
+
+// ================================================================================================
+
+// handle hover-ins over days in Calendar
+function handleCalendarHoversIn(el) {
+    // console.log(`in`, el);
+    Visual.makeDimmer(Visual.appFieldBlock.firstElementChild); // making what is shown on the right dimmer
+    // when hovering over any day el, render a block on the right on top of what is shown there now
+    const elDate = el.dataset.date.split(",").reverse().join("/");
+    const [eventsThisDay, occsThisDay, temporalDistance] = Logic.getDayData(elDate);
+    Visual.renderDayBlock(elDate, eventsThisDay, occsThisDay, temporalDistance);
+}
+
+// ================================================================================================
+
+function handleCalendarHoversOut(el) {
+    // console.log(`out`, el);
+    Visual.makeDimmer(Visual.appFieldBlock.firstElementChild, "restore"); // removing the dimmer class on what is shown on the right
+    Visual.removeDayBlock();
 }
 
 // ================================================================================================

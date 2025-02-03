@@ -345,4 +345,74 @@ function renderMessage(type, text) {
 
 // ================================================================================================
 
-export { renderMonth, renderForm, renderEvoccBlock, renderMessage };
+function renderDayBlock(date, eventsThisDay, occsThisDay, tempDist) {
+    let [daysRaw, years, months, weeks, days] = tempDist;
+    console.log(`daysRaw, years, months, weeks, days`, daysRaw, years, months, weeks, days);
+    let theDate = "";
+    if (daysRaw === 0) theDate = "today";
+    if (daysRaw === 1) theDate = `in ${daysRaw} day`;
+    if (daysRaw > 1 && daysRaw <= 10) theDate = `in ${daysRaw} days`;
+    if (daysRaw > 1 && daysRaw > 10) theDate = `in ${weeks} weeks, ${days} days`;
+    if (daysRaw === -1) theDate = `${Math.abs(daysRaw)} day ago`;
+    if (daysRaw < -1 && daysRaw >= -10) theDate = `${Math.abs(daysRaw)} days ago`;
+    if (daysRaw < -10) theDate = `${Math.abs(weeks)} weeks, ${Math.abs(days)} days ago`;
+
+    Visual.removeDayBlock(); // removing before re-rendering
+    const div = document.createElement("div");
+    div.classList.add("day-block__box", "invisible");
+
+    const eventsHtml =
+        eventsThisDay.length === 0
+            ? [`<div class="day-block__msg">No entries</div>`]
+            : eventsThisDay.map((eventObj) => {
+                  const timeHtml = !eventObj.time ? "" : `<div class="day-block__event-time">${eventObj.time}</div>`;
+                  const descHtml = !eventObj.description ? "" : `<div class="day-block__event-description">${eventObj.description}</div>`;
+                  return `<div class="day-block__event">
+                                <div class="day-block__event-title">${eventObj.title}</div>
+                                ${timeHtml}
+                                ${descHtml}
+                            </div>`;
+              });
+
+    const occsHtml =
+        occsThisDay.length === 0
+            ? [`<div class="day-block__msg">No entries</div>`]
+            : occsThisDay.map((occObj) => {
+                  const catHtml = !occObj.category ? "" : `<div class="day-block__occurrence-category">${occObj.category}</div>`;
+                  const descHtml = !occObj.description ? "" : `<div class="day-block__occurrence-description">${occObj.description}</div>`;
+                  return `<div class="day-block__occurrence">
+                                <div class="day-block__occurrence-title">${occObj.title}</div>
+                                ${catHtml}
+                                ${descHtml}
+                            </div>`;
+              });
+
+    div.innerHTML = `<div class="day-block">
+    <div class="day-block__info">Day Info</div>
+                                <div class="day-block__row">
+                                    <div class="day-block__date">${date}</div>
+                                    <span>—</span>
+                                    <div class="day-block__temp-distance">${theDate}</div>
+                                </div>
+                                <div class="day-block__events">
+                                    <div class="day-block__events-title">Events: <span>${
+                                        eventsHtml[0] === `<div>No entries</div>` ? 0 : eventsHtml.length
+                                    }</span></div>
+                                    ${eventsHtml.join("")}
+                                </div>
+                                <div class="day-block__occurrences">
+                                    <div class="day-block__occurrences-title">Occurrences: <span>${
+                                        occsHtml[0] === `<div>No entries</div>` ? 0 : occsHtml.length
+                                    }</span></div>
+                                    ${occsHtml.join("")}
+                                </div>
+                            </div>`;
+    Visual.appFieldBlock.appendChild(div);
+    setTimeout(() => {
+        div.classList.remove("invisible");
+    }, 100);
+}
+
+// ================================================================================================
+
+export { renderMonth, renderForm, renderEvoccBlock, renderMessage, renderDayBlock };

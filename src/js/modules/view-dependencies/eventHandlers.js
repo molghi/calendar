@@ -31,6 +31,30 @@ function handleCalendarClicks(handler) {
 
 // ================================================================================================
 
+// handle hover-ins over days in Calendar
+function handleCalendarHoversIn(handler) {
+    Visual.calendarBlock.addEventListener("mouseover", function (e) {
+        if (!e.target.closest(".calendar__day")) return;
+        if (e.target.closest(".calendar__day").classList.contains("calendar__day--empty")) return;
+        const hoveredDayEl = e.target.closest(".calendar__day");
+        handler(hoveredDayEl);
+    });
+}
+
+// ================================================================================================
+
+// handle hover-ins over days in Calendar
+function handleCalendarHoversOut(handler) {
+    Visual.calendarBlock.addEventListener("mouseout", function (e) {
+        if (!e.target.closest(".calendar__day")) return;
+        if (e.target.closest(".calendar__day").classList.contains("calendar__day--empty")) return;
+        const hoveredDayEl = e.target.closest(".calendar__day");
+        handler(hoveredDayEl);
+    });
+}
+
+// ================================================================================================
+
 // handle clicks in .app__field which is where the form or the Events This Month block is
 function handleNonCalendarClicks(handler) {
     Visual.appFieldBlock.addEventListener("click", function (e) {
@@ -79,4 +103,4 @@ function handleFormSubmission(handler) {
 
 // ================================================================================================
 
-export { handleCalendarClicks, handleNonCalendarClicks, handleFormSubmission };
+export { handleCalendarClicks, handleNonCalendarClicks, handleFormSubmission, handleCalendarHoversIn, handleCalendarHoversOut };
