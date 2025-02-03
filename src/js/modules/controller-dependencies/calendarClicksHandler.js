@@ -22,6 +22,7 @@ function calendarClicksHandler(actionType, el) {
         Visual.setClickedDay(clickedDate); // setting the string of the date of the clicked day
         Visual.renderForm("event", true, clickedDate); // 'true' for 'with animation' (when rendering)
         Visual.handleFormSubmission(formHandler); // handling form submission
+        Visual.setFormIsShown(); // setting that form is shown (boolean) and if true .calendar__days receives pointer-events none (no hovering)
     }
 }
 

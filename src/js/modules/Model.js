@@ -2,7 +2,15 @@
 
 import LS from "./model-dependencies/localStorage.js";
 
-import { differenceInDays, differenceInMonths, differenceInYears, formatDistanceStrict } from "date-fns";
+import {
+    differenceInDays,
+    differenceInWeeks,
+    differenceInMonths,
+    differenceInYears,
+    formatDistanceStrict,
+    intervalToDuration,
+    getDayOfYear,
+} from "date-fns";
 
 class Model {
     #state = {
@@ -293,10 +301,13 @@ class Model {
 
     getDayData(date) {
         // 'date' is a string like '28/2/2025'
-        const eventsThisDay = this.getEvents().filter((eventObj) => eventObj.date === date);
-        const occsThisDay = this.getOccurrences().filter((occObj) => occObj.date === date);
-        const temporalDistance = this.calcTemporalDistance(date);
-        return [eventsThisDay, occsThisDay, temporalDistance];
+        const eventsThisDay = this.getEvents().filter((eventObj) => eventObj.date === date); // getting all events this day
+        const occsThisDay = this.getOccurrences().filter((occObj) => occObj.date === date); // getting all occurrences this day
+        const temporalDistance = this.calcTemporalDistance(date); // calc-ing temporal distance between now and that day
+        const [aDate, month, year] = date.split("/").map((x) => +x);
+        const weekdayNum = new Date(year, month - 1, aDate).getDay();
+        const weekday = this.#state.weekdays[weekdayNum]; // getting the weekday
+        return [eventsThisDay, occsThisDay, temporalDistance, weekday];
     }
 
     // ================================================================================================
@@ -342,18 +353,30 @@ class Model {
     }*/
 
     calcTemporalDistance(dateString) {
-        const now = new Date();
-        const [day, month, year] = dateString.split("/").map(Number);
-        const targetDate = new Date(year, month - 1, day);
+        const [now, year, month, date, weekday, hours, minutes] = this.getNowTime();
+        const nowDate = new Date(year, month - 1, date, 0, 0, 0);
+        const [thenDate, thenMonth, thenYear] = dateString.split("/").map(Number);
+        const targetDate = new Date(thenYear, thenMonth - 1, thenDate);
 
         // Calculate differences using date-fns functions
-        let years = differenceInYears(targetDate, now);
-        let months = differenceInMonths(targetDate, now) % 12; // Remaining months after years
-        let totalDays = differenceInDays(targetDate, now);
-        let weeks = Math.floor(totalDays / 7); // Full weeks
+        let years = differenceInYears(targetDate, nowDate);
+        let months = differenceInMonths(targetDate, nowDate) % 12; // Remaining months after years
+        let totalDays = differenceInDays(targetDate, nowDate);
+        let weeks = differenceInWeeks(targetDate, nowDate);
+        // if (weeks > 3) (weeks = weeks % 4), (months += 1);
+        // let weeks = Math.floor(totalDays / 7); // Full weeks
         let days = totalDays % 7; // Remaining days after full weeks
 
-        return [totalDays, years, months, weeks, days]; // Return the result as an array
+        const intervalObj = intervalToDuration({
+            start: nowDate,
+            end: targetDate,
+        });
+
+        const dayOfTheYear = getDayOfYear(new Date(thenYear, thenMonth - 1, thenDate));
+        const endOfTheYear = getDayOfYear(new Date(thenYear, 11, 31));
+        const yearCompletedPercent = ((dayOfTheYear / endOfTheYear) * 100).toFixed(1);
+
+        return [totalDays, years, months, weeks, days, intervalObj, yearCompletedPercent]; // Return the result as an array
     }
 
     // ================================================================================================

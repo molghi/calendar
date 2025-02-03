@@ -84,6 +84,9 @@ function formHandler(values, type, formType) {
 
     const messageToShow = formType === "addForm" ? "Added successfully!" : "Edited successfully!";
     Visual.showMessage("success", messageToShow); // showing some notification in the UI
+
+    Visual.setFormIsShown(); // setting that form is shown (boolean, false here) and if false, .calendar__days loses the no-hover class
+    console.log(Visual.formIsShown);
 }
 
 // ================================================================================================
@@ -94,8 +97,8 @@ function handleCalendarHoversIn(el) {
     Visual.makeDimmer(Visual.appFieldBlock.firstElementChild); // making what is shown on the right dimmer
     // when hovering over any day el, render a block on the right on top of what is shown there now
     const elDate = el.dataset.date.split(",").reverse().join("/");
-    const [eventsThisDay, occsThisDay, temporalDistance] = Logic.getDayData(elDate);
-    Visual.renderDayBlock(elDate, eventsThisDay, occsThisDay, temporalDistance);
+    const [eventsThisDay, occsThisDay, temporalDistance, weekday] = Logic.getDayData(elDate);
+    Visual.renderDayBlock(elDate, eventsThisDay, occsThisDay, temporalDistance, weekday);
 }
 
 // ================================================================================================

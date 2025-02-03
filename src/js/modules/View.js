@@ -15,6 +15,7 @@ class View {
         this.appFieldBlock = document.querySelector(".app__field");
         this.containerEl = document.querySelector(".container");
         this.clickedDay = "";
+        this.formIsShown = false;
     }
 
     // ================================================================================================
@@ -143,14 +144,25 @@ class View {
 
     // ================================================================================================
 
-    renderDayBlock(date, eventsThisDay, occsThisDay, tempDist) {
-        renderDayBlock(date, eventsThisDay, occsThisDay, tempDist);
+    renderDayBlock(date, eventsThisDay, occsThisDay, tempDist, weekday) {
+        renderDayBlock(date, eventsThisDay, occsThisDay, tempDist, weekday);
     }
 
     // ================================================================================================
 
     removeDayBlock() {
         if (document.querySelector(".day-block__box")) document.querySelector(".day-block__box").remove();
+    }
+
+    // ================================================================================================
+
+    setFormIsShown() {
+        this.formIsShown = !this.formIsShown;
+        if (this.formIsShown) {
+            document.querySelector(".calendar__days").classList.add("no-hover");
+        } else {
+            document.querySelector(".calendar__days").classList.remove("no-hover");
+        }
     }
 
     // ================================================================================================

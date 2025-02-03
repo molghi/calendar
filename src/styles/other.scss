@@ -62,6 +62,10 @@
     opacity: 0.3;
 }
 
+.no-hover {
+    pointer-events: none;
+}
+
 // ================================================================================================
 
 .app {
@@ -114,16 +118,23 @@
     padding: 20px;
     padding-bottom: 30px;
     &__date {
-        font-size: 25px;
-        text-shadow: 0 0 2px var(--accent);
-    }
-    &__row {
+        margin-bottom: 10px;
         display: flex;
         align-items: center;
-        column-gap: 10px;
+        column-gap: 20px;
+        span:nth-child(1) {
+            font-size: 28px;
+            text-shadow: 0 0 2px var(--accent);
+        }
+        span:nth-child(2) {
+            font-size: 16px;
+        }
+    }
+    &__row {
         margin-bottom: 20px;
     }
-    &__temp-distance {
+    &__temp {
+        font-size: 14px;
     }
     &__events,
     &__occurrences {
@@ -151,7 +162,6 @@
     &__event {
         background-color: var(--bg);
         padding: 10px;
-        // font-size: 14px;
     }
     &__event-title {
     }
@@ -189,7 +199,14 @@
     }
 
     &__info {
-        margin-bottom: 20px;
+        margin-bottom: 10px;
+        font-size: 14px;
+        opacity: 0.5;
+    }
+    &__percent {
+        position: absolute;
+        top: 20px;
+        right: 20px;
         font-size: 14px;
         opacity: 0.5;
     }

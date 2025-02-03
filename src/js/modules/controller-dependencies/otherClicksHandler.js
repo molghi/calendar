@@ -22,6 +22,7 @@ function otherClicksHandler(type, el) {
         // and show Events This Month
         const eventsData = Logic.getEventsByMonth();
         Visual.renderEventsOccurrences("events", eventsData);
+        Visual.setFormIsShown(); // setting that form is shown (boolean, false here) and if false, .calendar__days loses the no-hover class
     } else if (type === "events") {
         // show Events This Month
         const eventsData = Logic.getEventsByMonth();
@@ -36,6 +37,7 @@ function otherClicksHandler(type, el) {
     } else if (type === "edit") {
         // editing one entry: event or occurence
         editOneEntry(el);
+        Visual.setFormIsShown(); // setting that form is shown (boolean) and if true .calendar__days receives pointer-events none (no hovering)
     }
 }
 
