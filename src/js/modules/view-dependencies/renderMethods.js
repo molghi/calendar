@@ -189,7 +189,7 @@ function getOccurrenceHtml(clickedDate, type = "add") {
             </div>
             <div class="app__form-input-box">
                 <input type="text" class="app__form-input app__form-input--date" placeholder="Date" required value="${clickedDate}" />
-                <input type="text" class="app__form-input app__form-input--title" placeholder="Category (optional)" />
+                <input type="text" class="app__form-input app__form-input--category" placeholder="Category (optional)" />
             </div>
             <div class="app__form-input-box">
                 <textarea class="app__form-input app__form-input--description app__form-input--description-occ" placeholder="Description (optional)"></textarea>
@@ -232,8 +232,9 @@ function returnEventsBlock(data) {
                 const desc = !eventObj.description
                     ? ""
                     : `<div class="ev-occ__item-row">
-                            <span class="ev-occ__item-minor-title">Note: </span>
-                            <span class="ev-occ__item-description" title="${eventObj.description}">${eventObj.description}</span>
+                        <div>
+                            <span class="ev-occ__item-description" title="${eventObj.description}"><span class="ev-occ__item-minor-title">Note: </span>${eventObj.description}</span>
+                            </div>
                         </div>`;
                 const time = !eventObj.time ? "" : `<span class="ev-occ__item-time"> at ${eventObj.time}</span>`;
 
@@ -283,45 +284,47 @@ function returnOccurencesBlock(data) {
                 const desc = !occObj.description
                     ? ""
                     : `<div class="ev-occ__item-row">
-                            <span class="ev-occ__item-minor-title">Note: </span>
-                            <span class="ev-occ__item-description" title="${occObj.description}">${occObj.description}</span>
+                        <div>
+                            <span class="ev-occ__item-description" title="${occObj.description}"><span class="ev-occ__item-minor-title">Note: </span>${occObj.description}</span>
+                            </div>
                         </div>`;
                 const category = !occObj.category
                     ? ""
                     : `<span class="ev-occ__item-minor-title">Category: </span><span title="${occObj.category}">${occObj.category}</span>`;
 
                 return `<div data-date="${occObj.date.split("/").reverse().join(",")}" class="ev-occ__item">
-                        <div class="ev-occ__item-btns">
-                            <button title="Edit" class="ev-occ__item-btn ev-occ__item-btn--edit">${editIcon}</button>
-                            <button title="Delete" class="ev-occ__item-btn ev-occ__item-btn--delete">${deleteIcon}</button>
-                        </div>
-                        <div class="ev-occ__item-row">
-                            <span class="ev-occ__item-title" title="${occObj.title}">${occObj.title}</span>
-                        </div>
-                        <div class="ev-occ__item-row">
-                            <div>
-                                <span class="ev-occ__item-minor-title">Date: </span>
-                                <span class="ev-occ__item-date">${occObj.date}</span>
+                            <div class="ev-occ__item-btns">
+                                <button title="Edit" class="ev-occ__item-btn ev-occ__item-btn--edit">${editIcon}</button>
+                                <button title="Delete" class="ev-occ__item-btn ev-occ__item-btn--delete">${deleteIcon}</button>
                             </div>
-                            <div>
-                                ${category}
+                            <div class="ev-occ__item-row">
+                                <span class="ev-occ__item-title" title="${occObj.title}">${occObj.title}</span>
                             </div>
-                            ${desc}
+                            <div class="ev-occ__item-row">
+                                <div>
+                                    <span class="ev-occ__item-minor-title">Date: </span>
+                                    <span class="ev-occ__item-date">${occObj.date}</span>
+                                </div>
+                                <div>
+                                    ${category}
+                                </div>
+                            </div>
+                                ${desc}
                         </div>`;
             })
             .join("");
     }
 
     return `<div class="ev-occ__box">
-            <div class="ev-occ__title">Occurrences This Month<span title="${data.length} occurrences this month">${data.length}</span></div>
-                <div class="ev-occ__switch">
-                    <button title="Scheduled and specific activities" class="ev-occ__switch-btn ev-occ__switch-btn--ev">Events</button>
-                    <button title="General things that happened, activities or notes" class="ev-occ__switch-btn ev-occ__switch-btn--occ active">Occurrences</button>
+                <div class="ev-occ__title">Occurrences This Month<span title="${data.length} occurrences this month">${data.length}</span></div>
+                    <div class="ev-occ__switch">
+                        <button title="Scheduled and specific activities" class="ev-occ__switch-btn ev-occ__switch-btn--ev">Events</button>
+                        <button title="General things that happened, activities or notes" class="ev-occ__switch-btn ev-occ__switch-btn--occ active">Occurrences</button>
+                    </div>
                 </div>
-            </div>
-                <div class="ev-occ__items">
-                ${toRender}
-                </div>`;
+                    <div class="ev-occ__items">
+                    ${toRender}
+                    </div>`;
 }
 
 // ================================================================================================
@@ -340,9 +343,15 @@ function renderMessage(type, text) {
         div.classList.remove("invisible", "moved-down");
     }, 300);
 
-    setTimeout(() => {
-        Visual.removeMessages();
-    }, 3000);
+    if (type === "error") {
+        setTimeout(() => {
+            Visual.removeMessages();
+        }, 10000);
+    } else {
+        setTimeout(() => {
+            Visual.removeMessages();
+        }, 3000);
+    }
 }
 
 // ================================================================================================
@@ -498,5 +507,37 @@ function getDateInfo(tempDist) {
 }
 
 // ================================================================================================
+// ================================================================================================
+// ================================================================================================
 
-export { renderMonth, renderForm, renderEvoccBlock, renderMessage, renderDayBlock };
+function renderRoutinesBlock(data) {
+    const [map, daysInThisMonth] = data;
+    if (document.querySelector(".routines")) document.querySelector(".routines").remove(); // removing before re-rendering
+    const div = document.createElement("div");
+    div.classList.add("routines");
+
+    const activitiesHtml = Object.keys(map).map((key) => {
+        const title = key[0].toUpperCase() + key.slice(1).toLowerCase();
+        const times = map[key];
+        const percent = (times / daysInThisMonth) * 100;
+        return `<li class="routines__list-item">
+                    <span class="routines__list-item-title">${title}</span> — <span>${times} out of ${daysInThisMonth} days (${percent.toFixed()}%)</span>
+                </li>`;
+    });
+
+    const content =
+        Object.keys(map).length === 0
+            ? `<div class="routines__msg">Repeated activities (occurrences with set categories) will appear here</div>`
+            : `<ol class="routines__list">
+                ${activitiesHtml.join("")}
+            </ol>`;
+
+    div.innerHTML = `<div class="routines__title">Routines This Month:</div>
+        ${content}`;
+
+    Visual.calendarBlock.appendChild(div);
+}
+
+// ================================================================================================
+
+export { renderMonth, renderForm, renderEvoccBlock, renderMessage, renderDayBlock, renderRoutinesBlock };

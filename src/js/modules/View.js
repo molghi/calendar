@@ -1,6 +1,6 @@
 // View is responsible for everything that happens on the screen: rendering and all visual interactions with any elements
 
-import { renderDayBlock, renderMonth, renderForm, renderEvoccBlock, renderMessage } from "./view-dependencies/renderMethods.js";
+import { renderDayBlock, renderMonth, renderForm, renderEvoccBlock, renderMessage, renderRoutinesBlock } from "./view-dependencies/renderMethods.js";
 import {
     handleCalendarClicks,
     handleNonCalendarClicks,
@@ -101,6 +101,7 @@ class View {
         document.querySelector(".app__form-input--title").value = obj.title;
         document.querySelector(".app__form-input--date").value = obj.date;
         if (obj.time) document.querySelector(".app__form-input--time").value = obj.time;
+        if (obj.category) document.querySelector(".app__form-input--category").value = obj.category;
         if (obj.description) document.querySelector(".app__form-input--description").value = obj.description;
     }
 
@@ -162,6 +163,42 @@ class View {
             document.querySelector(".calendar__days").classList.add("no-hover");
         } else {
             document.querySelector(".calendar__days").classList.remove("no-hover");
+        }
+    }
+
+    // ================================================================================================
+
+    renderRoutinesBlock(data) {
+        renderRoutinesBlock(data);
+    }
+
+    // ================================================================================================
+
+    toggleHighlightToday(todayString, toggleBooleanFlag) {
+        const todayEl = document.querySelector(`.calendar [data-date="${todayString}"]`);
+        if (!toggleBooleanFlag) {
+            // de-highlight
+            // todayEl.classList.remove("calendar__day--today");
+            todayEl.classList.add("dimmer");
+        } else {
+            // highlight
+            // todayEl.classList.add("calendar__day--today");
+            todayEl.classList.remove("dimmer");
+        }
+    }
+
+    // ================================================================================================
+
+    toggleHighlightDates(dataArr, toggleBooleanFlag) {
+        console.log(dataArr);
+        const allDayEls = [...document.querySelectorAll(".calendar__day")];
+        const neededEls = allDayEls.filter((el) => dataArr.includes(el.dataset.date));
+        if (toggleBooleanFlag) {
+            // highlight
+            neededEls.forEach((el) => el.classList.add("highlighted"));
+        } else {
+            // de-highlight
+            neededEls.forEach((el) => el.classList.remove("highlighted"));
         }
     }
 

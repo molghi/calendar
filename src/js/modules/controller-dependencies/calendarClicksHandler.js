@@ -42,8 +42,13 @@ function showNextMonth(myYear, myMonth) {
     // 'getThisMonthEventfulDays' returns an array of 2 arrays: event days (only dates) and occurrence days:
     const [eventDays, occurrenceDays] = Logic.getThisMonthEventfulDays();
     Visual.renderMonth([now, yr, mth, date, weekday, hrs, min, daysInThisMonth, monthWord, yearTime], eventDays, occurrenceDays); // rendering the month
-    const eventsData = Logic.getEventsByMonth(); // getting the data for the Events This Month block
-    Visual.renderEventsOccurrences("events", eventsData); // render the Events This Month block on the right
+    const userPreference = Logic.getSelectedEventsOrOccurences(); // returns either 'events' or 'occurrences' -- what the user clicked last
+    let myData;
+    userPreference === "events" ? (myData = Logic.getEventsByMonth()) : (myData = Logic.getOccurrencesByMonth()); // getting the data for the Events This Month block
+    Visual.renderEventsOccurrences(userPreference, myData); // render the Events This Month block on the right
+
+    const routinesData = Logic.filterOccsByCat();
+    Visual.renderRoutinesBlock(routinesData);
 }
 
 // ================================================================================================
@@ -62,8 +67,13 @@ function showPrevMonth(myYear, myMonth) {
     // 'getThisMonthEventfulDays' returns an array of 2 arrays: event days (only dates) and occurrence days:
     const [eventDays, occurrenceDays] = Logic.getThisMonthEventfulDays();
     Visual.renderMonth([now, yr, mth, date, weekday, hrs, min, daysInThisMonth, monthWord, yearTime], eventDays, occurrenceDays); // rendering the month
-    const eventsData = Logic.getEventsByMonth(); // getting the data for the Events This Month block
-    Visual.renderEventsOccurrences("events", eventsData); // render the Events This Month block on the right
+    const userPreference = Logic.getSelectedEventsOrOccurences(); // returns either 'events' or 'occurrences' -- what the user clicked last
+    let myData;
+    userPreference === "events" ? (myData = Logic.getEventsByMonth()) : (myData = Logic.getOccurrencesByMonth()); // getting the data for the Events This Month block
+    Visual.renderEventsOccurrences(userPreference, myData); // render the Events This Month block on the right
+
+    const routinesData = Logic.filterOccsByCat();
+    Visual.renderRoutinesBlock(routinesData);
 }
 
 // ================================================================================================
@@ -76,8 +86,13 @@ function backToNow() {
     // 'getThisMonthEventfulDays' returns an array of 2 arrays: event days (only dates) and occurrence days:
     const [eventDays, occurrenceDays] = Logic.getThisMonthEventfulDays();
     Visual.renderMonth([now, yr, mth, date, weekday, hrs, min, daysInThisMonth, monthWord, yearTime], eventDays, occurrenceDays); // rendering the month
-    const eventsData = Logic.getEventsByMonth(); // getting the data for the Events This Month block
-    Visual.renderEventsOccurrences("events", eventsData); // render the Events This Month block on the right
+    const userPreference = Logic.getSelectedEventsOrOccurences(); // returns either 'events' or 'occurrences' -- what the user clicked last
+    let myData;
+    userPreference === "events" ? (myData = Logic.getEventsByMonth()) : (myData = Logic.getOccurrencesByMonth()); // getting the data for the Events This Month block
+    Visual.renderEventsOccurrences(userPreference, myData); // render the Events This Month block on the right
+
+    const routinesData = Logic.filterOccsByCat();
+    Visual.renderRoutinesBlock(routinesData);
 }
 
 // ================================================================================================

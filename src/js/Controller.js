@@ -25,8 +25,13 @@ function init() {
     // 'getThisMonthEventfulDays' returns an array of 2 arrays: event days (only dates) and occurrence days:
     const [eventDays, occurrenceDays] = Logic.getThisMonthEventfulDays();
     Visual.renderMonth([now, year, month, date, weekday, hours, minutes, daysInThisMonth, monthWord, yearTime], eventDays, occurrenceDays); // render the now month
-    const eventsData = Logic.getEventsByMonth(); // getting the data for the Events This Month block
-    Visual.renderEventsOccurrences("events", eventsData); // render the Events This Month block on the right
+    const userPreference = Logic.getSelectedEventsOrOccurences(); // returns either 'events' or 'occurrences' -- what the user clicked last
+    let myData;
+    userPreference === "events" ? (myData = Logic.getEventsByMonth()) : (myData = Logic.getOccurrencesByMonth()); // getting the data for the Events This Month block
+    Visual.renderEventsOccurrences(userPreference, myData); // render the Events This Month block on the right
+
+    const routinesData = Logic.filterOccsByCat();
+    Visual.renderRoutinesBlock(routinesData);
 
     runEventListeners();
 
@@ -36,8 +41,12 @@ function init() {
         const [now, yr, mth, date, weekday, hrs, min, daysInThisMonth, monthWord, yearTime] = Logic.calcMonth(myYear, myMonth);
         const [eventDays, occurrenceDays] = Logic.getThisMonthEventfulDays();
         Visual.renderMonth([now, yr, mth, date, weekday, hrs, min, daysInThisMonth, monthWord, yearTime], eventDays, occurrenceDays);
-        const eventsData = Logic.getEventsByMonth(); // getting the data for the Events This Month block
-        Visual.renderEventsOccurrences("events", eventsData); // render the Events This Month block on the right
+        const userPreference = Logic.getSelectedEventsOrOccurences(); // returns either 'events' or 'occurrences' -- what the user clicked last
+        let myData;
+        userPreference === "events" ? (myData = Logic.getEventsByMonth()) : (myData = Logic.getOccurrencesByMonth()); // getting the data for the Events This Month block
+        Visual.renderEventsOccurrences(userPreference, myData); // render the Events This Month block on the right
+        const routinesData = Logic.filterOccsByCat();
+        Visual.renderRoutinesBlock(routinesData);
     });
 }
 init();
@@ -50,6 +59,21 @@ function runEventListeners() {
     Visual.handleNonCalendarClicks(otherClicksHandler); // handle clicks in .app__field which is where the form is
     Visual.handleCalendarHoversIn(handleCalendarHoversIn); // handle hover-ins over days in Calendar
     Visual.handleCalendarHoversOut(handleCalendarHoversOut); // handle hover-outs over days in Calendar
+
+    Logic.everyMinuteTimer(() => {
+        // refreshing the interface if it is a new day
+        const [myYear, myMonth] = Logic.getMonthToShow(); // fetch [year, month]
+        const [now, yr, mth, date, weekday, hrs, min, daysInThisMonth, monthWord, yearTime] = Logic.calcMonth(myYear, myMonth);
+        const [eventDays, occurrenceDays] = Logic.getThisMonthEventfulDays();
+        Visual.renderMonth([now, yr, mth, date, weekday, hrs, min, daysInThisMonth, monthWord, yearTime], eventDays, occurrenceDays);
+        const userPreference = Logic.getSelectedEventsOrOccurences(); // returns either 'events' or 'occurrences' -- what the user clicked last
+        let myData;
+        userPreference === "events" ? (myData = Logic.getEventsByMonth()) : (myData = Logic.getOccurrencesByMonth()); // getting the data for the Events This Month block
+        Visual.renderEventsOccurrences(userPreference, myData); // render the Events This Month block on the right
+
+        const routinesData = Logic.filterOccsByCat();
+        Visual.renderRoutinesBlock(routinesData);
+    });
 }
 
 // ================================================================================================
@@ -59,7 +83,7 @@ function formHandler(values, type, formType) {
     // NOTE: 'values' is array, 'type' is string, 'formType' is either 'editForm' or 'addForm'
     const [isValidated, safeValues, message] = Logic.validateInput(values, type); // validating input
     if (!isValidated) {
-        console.error(message); // showing message if validation failed
+        // console.error(message); // showing message if validation failed
         Visual.showMessage("error", message); // showing some notification in the UI
         return;
     }
@@ -70,8 +94,13 @@ function formHandler(values, type, formType) {
     }
     Visual.removeForm(); // removing form
 
-    const eventsData = Logic.getEventsByMonth(); // showing the 'Events This Month' block
-    Visual.renderEventsOccurrences("events", eventsData); // rendering the Events This Month block on the right
+    const userPreference = Logic.getSelectedEventsOrOccurences(); // returns either 'events' or 'occurrences' -- what the user clicked last
+    let myData;
+    userPreference === "events" ? (myData = Logic.getEventsByMonth()) : (myData = Logic.getOccurrencesByMonth()); // getting the data for the Events This Month block
+    Visual.renderEventsOccurrences(userPreference, myData); // render the Events This Month block on the right
+
+    const routinesData = Logic.filterOccsByCat();
+    Visual.renderRoutinesBlock(routinesData);
 
     // re-rendering Calendar based on this new state:
     // 'getThisMonthEventfulDays' returns an array of 2 arrays: event days (only dates) and occurrence days:
@@ -86,27 +115,41 @@ function formHandler(values, type, formType) {
     Visual.showMessage("success", messageToShow); // showing some notification in the UI
 
     Visual.setFormIsShown(); // setting that form is shown (boolean, false here) and if false, .calendar__days loses the no-hover class
-    console.log(Visual.formIsShown);
 }
 
 // ================================================================================================
 
 // handle hover-ins over days in Calendar
-function handleCalendarHoversIn(el) {
-    // console.log(`in`, el);
-    Visual.makeDimmer(Visual.appFieldBlock.firstElementChild); // making what is shown on the right dimmer
-    // when hovering over any day el, render a block on the right on top of what is shown there now
-    const elDate = el.dataset.date.split(",").reverse().join("/");
-    const [eventsThisDay, occsThisDay, temporalDistance, weekday] = Logic.getDayData(elDate);
-    Visual.renderDayBlock(elDate, eventsThisDay, occsThisDay, temporalDistance, weekday);
+function handleCalendarHoversIn(actionType, el) {
+    if (actionType === `day-block`) {
+        Visual.makeDimmer(Visual.appFieldBlock.firstElementChild); // making what is shown on the right dimmer
+        // when hovering over any day el, render a block on the right on top of what is shown there now
+        const elDate = el.dataset.date.split(",").reverse().join("/");
+        const [eventsThisDay, occsThisDay, temporalDistance, weekday] = Logic.getDayData(elDate);
+        Visual.renderDayBlock(elDate, eventsThisDay, occsThisDay, temporalDistance, weekday);
+    } else {
+        // get all dates that have this category ('el') and highlight them
+        const allSuchDates = Logic.getDates(el);
+        const today = `${new Date().getFullYear()},${new Date().getMonth() + 1},${new Date().getDate()}`;
+        Visual.toggleHighlightToday(today, false);
+        Visual.toggleHighlightDates(allSuchDates, true);
+    }
 }
 
 // ================================================================================================
 
-function handleCalendarHoversOut(el) {
-    // console.log(`out`, el);
-    Visual.makeDimmer(Visual.appFieldBlock.firstElementChild, "restore"); // removing the dimmer class on what is shown on the right
-    Visual.removeDayBlock();
+function handleCalendarHoversOut(actionType, el) {
+    if (actionType === `day-block`) {
+        // console.log(`out`, el);
+        Visual.makeDimmer(Visual.appFieldBlock.firstElementChild, "restore"); // removing the dimmer class on what is shown on the right
+        Visual.removeDayBlock();
+    } else {
+        // get all dates that have this category ('el') and de-highlight them
+        const allSuchDates = Logic.getDates(el);
+        const today = `${new Date().getFullYear()},${new Date().getMonth() + 1},${new Date().getDate()}`;
+        Visual.toggleHighlightToday(today, true);
+        Visual.toggleHighlightDates(allSuchDates, false);
+    }
 }
 
 // ================================================================================================

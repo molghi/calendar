@@ -20,17 +20,30 @@ function otherClicksHandler(type, el) {
         // close/remove the form
         Visual.removeForm();
         // and show Events This Month
-        const eventsData = Logic.getEventsByMonth();
-        Visual.renderEventsOccurrences("events", eventsData);
+        const userPreference = Logic.getSelectedEventsOrOccurences(); // returns either 'events' or 'occurrences' -- what the user clicked last
+        let myData;
+        userPreference === "events" ? (myData = Logic.getEventsByMonth()) : (myData = Logic.getOccurrencesByMonth()); // getting the data for the Events This Month block
+        Visual.renderEventsOccurrences(userPreference, myData); // render the Events This Month block on the right
         Visual.setFormIsShown(); // setting that form is shown (boolean, false here) and if false, .calendar__days loses the no-hover class
+
+        const routinesData = Logic.filterOccsByCat();
+        Visual.renderRoutinesBlock(routinesData);
     } else if (type === "events") {
         // show Events This Month
         const eventsData = Logic.getEventsByMonth();
         Visual.renderEventsOccurrences("events", eventsData);
+        Logic.setSelectedEventsOrOccurences("events");
+
+        const routinesData = Logic.filterOccsByCat();
+        Visual.renderRoutinesBlock(routinesData);
     } else if (type === "occurrences") {
         // show Occurences This Month
         const occsData = Logic.getOccurrencesByMonth();
         Visual.renderEventsOccurrences("occurrences", occsData);
+        Logic.setSelectedEventsOrOccurences("occurrences");
+
+        const routinesData = Logic.filterOccsByCat();
+        Visual.renderRoutinesBlock(routinesData);
     } else if (type === "delete") {
         // delete one entry: event or occurrence
         deleteOneEntry(el);
@@ -58,16 +71,21 @@ function deleteOneEntry(el) {
     // 'getThisMonthEventfulDays' returns an array of 2 arrays: event days (only dates/numbers) and occurrence days (same):
     const [eventDays, occurrenceDays] = Logic.getThisMonthEventfulDays();
     Visual.renderMonth([now, year, month, date, weekday, hours, minutes, daysInThisMonth, monthWord, yearTime], eventDays, occurrenceDays); // rendering the now month
-    const eventsData = Logic.getEventsByMonth(); // getting the data for the Events This Month block
-    Visual.renderEventsOccurrences("events", eventsData); // rendering the Events This Month block on the right
+    const userPreference = Logic.getSelectedEventsOrOccurences(); // returns either 'events' or 'occurrences' -- what the user clicked last
+    let myData;
+    userPreference === "events" ? (myData = Logic.getEventsByMonth()) : (myData = Logic.getOccurrencesByMonth()); // getting the data for the Events This Month block
+    Visual.renderEventsOccurrences(userPreference, myData); // render the Events This Month block on the right
+
+    const routinesData = Logic.filterOccsByCat();
+    Visual.renderRoutinesBlock(routinesData);
 }
 
 // ================================================================================================
 
 // dependency of 'otherClicksHandler'
 function editOneEntry(el) {
-    const itemTitle = el.querySelector(".ev-occ__item-title").textContent.toLowerCase().trim(); // getting the event title
-    const itemDate = el.querySelector(".ev-occ__item-date").textContent.toLowerCase().trim(); // and its date
+    const itemTitle = el.querySelector(".ev-occ__item-title").textContent.trim(); // getting the event title
+    const itemDate = el.querySelector(".ev-occ__item-date").textContent.trim(); // and its date
     const itemType = [...document.querySelectorAll(".ev-occ__switch-btn")]
         .find((x) => x.classList.contains("active"))
         .textContent.toLowerCase()
@@ -75,7 +93,8 @@ function editOneEntry(el) {
     const itemData = Logic.getEntryData(itemTitle, itemDate, itemType); // getting all the data of 'el' from the state: 4 of its props
     Logic.setEditingItem(itemTitle, itemDate, itemType); // setting what item I am editing now in case if I modify all of its fields: to be able to find it then in state
     Visual.removeEventsOccurrences(); // removing the Evs/Occs block
-    Visual.renderForm("event", true, itemData.date, "edit"); // showing the form and making it the Edit form ('edit' param) -- 'true' for 'with animation' (when rendering)
+    Visual.renderForm(itemType.slice(0, -1), true, itemData.date, "edit"); // showing the form and making it the Edit form ('edit' param) -- 'true' for 'with animation' (when rendering)
+    console.log(itemData);
     Visual.populateForm(itemData); // putting the data of the clicked ev/occ in the fields of that Edit form
     Visual.handleFormSubmission(formHandler); // handling that form submission
 }

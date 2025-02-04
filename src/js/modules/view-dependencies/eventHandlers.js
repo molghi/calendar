@@ -34,10 +34,16 @@ function handleCalendarClicks(handler) {
 // handle hover-ins over days in Calendar
 function handleCalendarHoversIn(handler) {
     Visual.calendarBlock.addEventListener("mouseover", function (e) {
+        if (e.target.closest(".routines__list-item-title")) {
+            const text = e.target.closest(".routines__list-item-title").textContent.trim().toLowerCase();
+            handler("habits", text);
+            return;
+        }
+
         if (!e.target.closest(".calendar__day")) return;
         if (e.target.closest(".calendar__day").classList.contains("calendar__day--empty")) return;
         const hoveredDayEl = e.target.closest(".calendar__day");
-        handler(hoveredDayEl);
+        handler("day-block", hoveredDayEl);
     });
 }
 
@@ -46,10 +52,16 @@ function handleCalendarHoversIn(handler) {
 // handle hover-ins over days in Calendar
 function handleCalendarHoversOut(handler) {
     Visual.calendarBlock.addEventListener("mouseout", function (e) {
+        if (e.target.closest(".routines__list-item-title")) {
+            const text = e.target.closest(".routines__list-item-title").textContent.trim().toLowerCase();
+            handler("habits", text);
+            return;
+        }
+
         if (!e.target.closest(".calendar__day")) return;
         if (e.target.closest(".calendar__day").classList.contains("calendar__day--empty")) return;
         const hoveredDayEl = e.target.closest(".calendar__day");
-        handler(hoveredDayEl);
+        handler("day-block", hoveredDayEl);
     });
 }
 

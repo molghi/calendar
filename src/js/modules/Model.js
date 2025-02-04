@@ -2,33 +2,29 @@
 
 import LS from "./model-dependencies/localStorage.js";
 
-import {
-    differenceInDays,
-    differenceInWeeks,
-    differenceInMonths,
-    differenceInYears,
-    formatDistanceStrict,
-    intervalToDuration,
-    getDayOfYear,
-} from "date-fns";
+import { differenceInDays, differenceInWeeks, differenceInMonths, differenceInYears, intervalToDuration, getDayOfYear } from "date-fns";
 
 class Model {
     #state = {
         months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
         weekdays: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
         nowDate: [],
-        monthToShow: [],
+        monthToShow: [new Date().getFullYear(), new Date().getMonth() + 1],
         hourlyTimer: "",
         data: {
             events: [],
             occurrences: [],
         },
         editingItem: "",
+        everyMinTimer: "",
+        selectedEventsOrOccurences: "events",
     };
 
     constructor() {
         this.fetchEventOccurrences(); // fetching from LS
+        this.fetchSelectedEventsOrOccurences();
         console.log(this.#state);
+        this.filterOccsByCat();
     }
 
     // ================================================================================================
@@ -37,6 +33,22 @@ class Model {
     getData = () => this.#state.data; // both arrays
     getEvents = () => this.#state.data.events;
     getOccurrences = () => this.#state.data.occurrences;
+
+    // ================================================================================================
+
+    // setting and getting and fetching whichever block is displayed on the right (the last clicked by a user) Events or Occurrences
+    setSelectedEventsOrOccurences(value) {
+        this.#state.selectedEventsOrOccurences = value;
+        LS.save("calendarUserPreference", this.#state.selectedEventsOrOccurences, "prim"); // pushing to LS
+    } // setting user preference
+
+    getSelectedEventsOrOccurences = () => this.#state.selectedEventsOrOccurences;
+
+    fetchSelectedEventsOrOccurences() {
+        const fetched = LS.get("calendarUserPreference", "prim");
+        if (!fetched) return;
+        this.#state.selectedEventsOrOccurences = fetched;
+    }
 
     // ================================================================================================
 
@@ -167,19 +179,25 @@ class Model {
         if (date.trim().toLowerCase().length === 0) (isValidated = false), (message = "Date is incorrect");
 
         // using regular expressions with test() to validate each input
-        if (!/^[a-zA-Z0-9\s]+$/.test(title)) (isValidated = false), (message = "Title is incorrect");
-        if (!/^[0-9./]+$/.test(date)) (isValidated = false), (message = "Date is incorrect");
+        // if (!/^[a-zA-Z0-9\s]+$/.test(title)) (isValidated = false), (message = "Title is incorrect");
+        // if (!/^[0-9./]+$/.test(date)) (isValidated = false), (message = "Date is incorrect");
+        if (!/^(0?[1-9]|[12]\d|3[01])[./](0?[1-9]|1[0-2])[./]\d{4}$/.test(date))
+            (isValidated = false), (message = "Date is incorrect. The correct format: D/M/YYYY or DD.MM.YYYY");
 
-        // if (type === "event") {
-        //     if (!/^[0-9:]+$/.test(variable)) isValidated = false;
-        // } else {
-        //     if (!/^[a-zA-Z0-9\s]+$/.test(variable)) isValidated = false;
-        // }
+        if (type === "event") {
+            if (!/^(?:[01]?\d|2[0-3]):[0-5]\d$/.test(variable) && variable.length > 0)
+                (isValidated = false), (message = "Time is incorrect. The correct format: HH:MM (24-hour time)");
+            // if it's type 'event', the 'variable' is 'time' -- if it's 'occurrence', the 'variable' is 'category'
+        } else {
+            // type is occurrence here
+        }
+
+        const capitalise = (value) => value[0].toUpperCase() + value.slice(1).toLowerCase(); // small helper func
 
         let safeValues = {
-            title: title.trim().toLowerCase(),
-            date: date.trim().toLowerCase(),
-            variable: variable.trim().toLowerCase(),
+            title: title.trim(),
+            date: date.trim(),
+            variable: variable.trim(),
             desc: desc.trim(),
             type: type,
         };
@@ -192,7 +210,8 @@ class Model {
 
     // adding an event or occurrence
     addEventOccurrence(obj) {
-        const { date, desc, title, type, variable } = obj;
+        let { date, desc, title, type, variable } = obj;
+        if (date.includes(".")) date = date.split(".").join("/");
         const myObj = {
             date,
             description: desc,
@@ -219,7 +238,11 @@ class Model {
 
         // editing:
         if (obj.title !== editingItem.title) editingItem.title = obj.title;
-        if (obj.date !== editingItem.date) editingItem.date = obj.date;
+        if (obj.date !== editingItem.date) {
+            let date = obj.date;
+            if (obj.date.includes(".")) date = date.split(".").join("/");
+            editingItem.date = date;
+        }
         if (obj.desc !== editingItem.description) editingItem.description = obj.desc;
         if (editingItemType === "events") {
             if (obj.variable !== editingItem.time) editingItem.time = obj.variable;
@@ -388,6 +411,65 @@ class Model {
     }
 
     getEditingItem = () => this.#state.editingItem;
+
+    // ================================================================================================
+
+    // runs every 60 secs
+    everyMinuteTimer(handler) {
+        clearInterval(this.#state.everyMinTimer);
+
+        this.#state.everyMinTimer = setInterval(() => {
+            const [now, year, month, date, weekday, hours, minutes] = this.getNowTime();
+            if (hours === 0 && minutes === 0) handler(); // if it is a new day, refresh interface
+        }, 60000);
+    }
+
+    // ================================================================================================
+
+    // filtering occurrences by category
+    filterOccsByCat() {
+        const occs = this.getOccurrences();
+        const [yearShowing, monthShowing] = this.#state.monthToShow;
+
+        const withCategory = occs.filter((occObj) => {
+            const [date, month, year] = occObj.date.split("/");
+            // console.log(+month);
+            // console.log(monthShowing);
+            // console.log(+year);
+            // console.log(yearShowing);
+            return occObj.category && +month === monthShowing && +year === yearShowing; // all occurrences that have category assigned and happened in the observing month-year
+        });
+        const allCategories = withCategory.map((occObj) => occObj.category.toLowerCase().trim()); // a flat arr of strings: all cats
+
+        const map = {};
+        [...new Set(allCategories)].forEach((cat) => (map[cat] = 0)); // pre-filling the map
+        allCategories.forEach((catString, index, arr) => (map[catString] += 1)); // filling it properly to see how many times a set thing occurs in an array
+
+        const frequenciesSorted = Object.values(map).sort((a, b) => b - a);
+        // console.log(frequenciesSorted);
+        const repeated = Object.keys(map).filter((cat) => map[cat] > 1); // getting those that are repeated more than once
+
+        const repeatedOccsObjs = occs.filter((occObj) => repeated.includes(occObj.category.toLowerCase())); // the objects of all those occurrences
+        // deleting those props that have 1 as value (repeated once)
+        Object.values(map).forEach((value, index) => {
+            const keys = Object.keys(map);
+            if (value === 1) delete map[keys[index]];
+        });
+
+        console.log(yearShowing, monthShowing);
+        const daysInThisMonth = new Date(yearShowing, monthShowing, 1 - 1).getDate();
+        return [map, daysInThisMonth];
+    }
+
+    // ================================================================================================
+
+    // get all dates that have this category
+    getDates(categoryString) {
+        const occs = this.getOccurrences();
+        let result = occs.filter((occObj) => occObj.category.toLowerCase() === categoryString).map((obj) => obj.date);
+        result = result.map((dateString) => dateString.split("/").reverse().join(","));
+        return result;
+    }
 
     // ================================================================================================
 }

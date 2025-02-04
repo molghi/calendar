@@ -2,6 +2,7 @@
 
 .ev-occ {
     position: relative;
+    height: 100%;
 
     &__box {
         display: flex;
@@ -9,8 +10,16 @@
         justify-content: space-between;
         column-gap: 20px;
         row-gap: 10px;
-        margin-bottom: 24px;
+        // margin-bottom: 24px;
         flex-wrap: wrap;
+        background-color: var(--bg);
+        // background-color: #111;
+        position: sticky;
+        z-index: 10;
+        padding-bottom: 20px;
+        top: 0;
+        left: 0;
+        right: 0;
     }
 
     &__title {
@@ -38,9 +47,12 @@
         display: flex;
         flex-direction: column;
         row-gap: 15px;
-        max-height: 525px;
-        overflow-y: auto;
+        // max-height: 525px;
+        // overflow-y: auto;
         padding-right: 7px;
+        height: 100%;
+        // padding-top: 89px;
+        // padding-top: 48px;
     }
 
     &__item {
@@ -56,22 +68,41 @@
         }
         &-title {
             font-size: 19px;
+            max-height: 44px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2; /* Limit to 2 lines */
         }
         &-minor-title {
             opacity: 0.5;
+            // float: left;
+            font-size: 16px;
         }
-        &-date {
+        &-date,
+        &-time {
             font-size: 14px;
         }
         &-description {
+            // float: right;
+            // display: inline-block;
+            line-height: 1.25;
             font-size: 14px;
+            // max-height: 150px;
+            max-height: 90px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 5; /* Limit to 5 lines */
         }
         &-btns {
             position: absolute;
-            top: 5px;
-            right: 5px;
+            top: 1px;
+            right: 1px;
             display: flex;
-            column-gap: 10px;
+            column-gap: 7px;
             opacity: 0;
             visibility: hidden;
             transition: all 0.2s;
