@@ -7,21 +7,34 @@ import {
     handleFormSubmission,
     handleCalendarHoversIn,
     handleCalendarHoversOut,
+    handleAppfieldHoversIn,
+    handleAppfieldHoversOut,
+    handleActionClicks,
+    reactToFileInput,
 } from "./view-dependencies/eventHandlers.js";
+
+// import KeyCommands from './view-dependencies/keyCommands.js'
+import listenKeys from "./view-dependencies/keyCommands.js";
 
 class View {
     constructor() {
         this.calendarBlock = document.querySelector(".calendar");
         this.appFieldBlock = document.querySelector(".app__field");
         this.containerEl = document.querySelector(".container");
+        this.actionsBlock = document.querySelector(".actions");
+        this.inputFileEl = document.querySelector(".importer");
         this.clickedDay = "";
         this.formIsShown = false;
+        this.colors = ["green", "orange", "yellow", "red", "purple", "brown", "blue", "pink", "lightgreen", "peachpuff"];
+        this.colorCounter = 0;
     }
 
     // ================================================================================================
 
     setClickedDay = (value) => (this.clickedDay = value);
     getClickedDay = () => this.clickedDay;
+
+    getColors = () => this.colors;
 
     // ================================================================================================
 
@@ -190,7 +203,6 @@ class View {
     // ================================================================================================
 
     toggleHighlightDates(dataArr, toggleBooleanFlag) {
-        console.log(dataArr);
         const allDayEls = [...document.querySelectorAll(".calendar__day")];
         const neededEls = allDayEls.filter((el) => dataArr.includes(el.dataset.date));
         if (toggleBooleanFlag) {
@@ -200,6 +212,53 @@ class View {
             // de-highlight
             neededEls.forEach((el) => el.classList.remove("highlighted"));
         }
+    }
+
+    // ================================================================================================
+
+    handleAppfieldHoversIn(handler) {
+        handleAppfieldHoversIn(handler);
+    }
+
+    handleAppfieldHoversOut(handler) {
+        handleAppfieldHoversOut(handler);
+    }
+    // ================================================================================================
+
+    listenKeys(handler) {
+        listenKeys(handler);
+    }
+
+    // ================================================================================================
+
+    updateDocTitle(value) {
+        let [dateString, eventsNum, occsNum] = value;
+        // const events = eventsNum === 0 ? "" : `, E: ${eventsNum}`;
+        // const occs = occsNum === 0 ? "" : `, O: ${occsNum}`;
+        // document.title = `Calendar — ${dateString}${events}${occs}`;
+
+        if (eventsNum > 0 || occsNum > 0) {
+            document.title = `Calendar - ${dateString} - Today: 1${eventsNum + occsNum}`;
+        } else document.title = `Calendar — ${dateString}`;
+    }
+
+    // ================================================================================================
+
+    handleActionClicks(handler) {
+        handleActionClicks(handler);
+    }
+
+    // ================================================================================================
+
+    // changing the accent colour
+    changeAccentColor(color) {
+        document.documentElement.style.setProperty("--accent", color);
+    }
+
+    // ================================================================================================
+
+    reactToFileInput(handler) {
+        reactToFileInput(handler);
     }
 
     // ================================================================================================

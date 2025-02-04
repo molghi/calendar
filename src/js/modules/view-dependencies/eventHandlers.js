@@ -49,7 +49,7 @@ function handleCalendarHoversIn(handler) {
 
 // ================================================================================================
 
-// handle hover-ins over days in Calendar
+// handle hover-outs over days in Calendar
 function handleCalendarHoversOut(handler) {
     Visual.calendarBlock.addEventListener("mouseout", function (e) {
         if (e.target.closest(".routines__list-item-title")) {
@@ -115,4 +115,55 @@ function handleFormSubmission(handler) {
 
 // ================================================================================================
 
-export { handleCalendarClicks, handleNonCalendarClicks, handleFormSubmission, handleCalendarHoversIn, handleCalendarHoversOut };
+function handleAppfieldHoversIn(handler) {
+    Visual.appFieldBlock.addEventListener("mouseover", function (e) {
+        if (e.target.closest(".ev-occ__item")) {
+            const item = e.target.closest(".ev-occ__item");
+            handler(item.dataset.date);
+        }
+    });
+}
+
+// ================================================================================================
+
+function handleAppfieldHoversOut(handler) {
+    Visual.appFieldBlock.addEventListener("mouseout", function (e) {
+        if (e.target.closest(".ev-occ__item")) {
+            const item = e.target.closest(".ev-occ__item");
+            handler(item.dataset.date);
+        }
+    });
+}
+
+// ================================================================================================
+
+// handling clicks in .actions
+function handleActionClicks(handler) {
+    Visual.actionsBlock.addEventListener("click", function (e) {
+        if (e.target.closest(".actions__action")) {
+            const type = e.target.closest(".actions__action").textContent.trim().toLowerCase();
+            handler(type);
+        }
+    });
+}
+
+// ================================================================================================
+
+// react to file import
+function reactToFileInput(handler) {
+    Visual.inputFileEl.addEventListener("change", handler); // reacting to the import event
+}
+
+// ================================================================================================
+
+export {
+    handleCalendarClicks,
+    handleNonCalendarClicks,
+    handleFormSubmission,
+    handleCalendarHoversIn,
+    handleCalendarHoversOut,
+    handleAppfieldHoversIn,
+    handleAppfieldHoversOut,
+    handleActionClicks,
+    reactToFileInput,
+};

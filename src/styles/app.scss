@@ -3,6 +3,37 @@
 // ================================================================================================
 
 .app {
+    display: flex;
+    justify-content: space-between;
+    column-gap: 50px;
+
+    &__column {
+        &:nth-child(1) {
+            max-width: calc(var(--dayBoxSize) * 7 + 2px);
+            flex-basis: calc(var(--dayBoxSize) * 7 + 2px);
+            flex-shrink: 0;
+            flex-grow: 1;
+        }
+        &:nth-child(2) {
+            flex-shrink: 1;
+            flex-grow: 0;
+            flex-basis: 500px;
+            max-width: 500px;
+        }
+    }
+    &__calendar {
+    }
+    &__field {
+        // height: 600px;
+        height: 84vh;
+        overflow-x: hidden;
+        position: relative;
+        // border: 1px solid #111;
+        div:nth-child(1) {
+            transition: all 0.3s;
+        }
+    }
+
     &__form-box {
         width: 100%;
         padding: 10px;

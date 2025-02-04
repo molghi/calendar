@@ -1,0 +1,33 @@
+@use "./initial";
+
+.hidden {
+    display: none !important;
+}
+
+.active {
+    background-color: var(--accent);
+    color: var(--bg);
+}
+
+.invisible {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.moved-down {
+    transform: translateY(30px);
+}
+
+.dimmer {
+    opacity: 0.3 !important;
+}
+
+.no-hover {
+    pointer-events: none;
+}
+
+.highlighted {
+    background-color: var(--accent);
+    box-shadow: 0 0 20px var(--accent);
+    color: var(--bg);
+}

@@ -83,6 +83,13 @@
             }
         }
 
+        &--name {
+            pointer-events: none;
+            font-size: 16px;
+            text-align: center;
+            max-height: 30px;
+        }
+
         span.calendar__day--eventful {
             position: absolute;
             top: 0;

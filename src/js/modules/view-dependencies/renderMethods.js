@@ -58,34 +58,40 @@ function renderMonthDays(year, month, weekday, daysInThisMonth, date, showingCur
     new Array(daysToPrepend).fill("x").forEach((x) => thisMonth.unshift(x)); // pushing empty days at the front
     new Array(daysToAppend).fill("x").forEach((x) => thisMonth.push(x)); // pushing empty days at the back
 
-    const html = thisMonth
-        .map((x) => {
-            const emptyClass = x === "x" ? " calendar__day--empty" : ""; // a class for an empty day
-            let todayClass = x === date ? " calendar__day--today" : ""; // a class to visually distinguish today
-            let passedClass = x < date ? " calendar__day--passed" : ""; // a class to visually distinguish passed days
-            if (!showingCurrentPeriod) (todayClass = ""), (passedClass = ""); // if the month to show is not the current one, no today-highlighting and no assigning the passed-day class
-            const classes = `calendar__day${emptyClass}${passedClass}${todayClass}`.trim(); // getting a string of all classes
-            const content = typeof x === "number" ? x : ""; // 'content' is the date num
-            const dateAttr = typeof x === "number" ? `data-date="${year},${month},${x}"` : "";
+    let html = thisMonth.map((x) => {
+        const emptyClass = x === "x" ? " calendar__day--empty" : ""; // a class for an empty day
+        let todayClass = x === date ? " calendar__day--today" : ""; // a class to visually distinguish today
+        let passedClass = x < date ? " calendar__day--passed" : ""; // a class to visually distinguish passed days
+        if (!showingCurrentPeriod) (todayClass = ""), (passedClass = ""); // if the month to show is not the current one, no today-highlighting and no assigning the passed-day class
+        const classes = `calendar__day${emptyClass}${passedClass}${todayClass}`.trim(); // getting a string of all classes
+        const content = typeof x === "number" ? x : ""; // 'content' is the date num
+        const dateAttr = typeof x === "number" ? `data-date="${year},${month},${x}"` : "";
 
-            let eventContent = ""; // starter content for a day with an event
-            let occurenceContent = ""; // starter content for a day with an occurrence
-            let timesItOccursInEvents = 0; // to figure our how many events this day has
-            let timesItOccursInOccs = 0; // to figure our how many occurrences this day has
-            eventDaysArr.forEach((eventNum) => eventNum === x && timesItOccursInEvents++); // eventDaysArr has duplicates, by design
-            occDaysArr.forEach((occNum) => occNum === x && timesItOccursInOccs++);
-            if (eventDaysArr && eventDaysArr.length > 0)
-                eventContent = eventDaysArr.includes(x) ? `<span class="calendar__day--eventful">${timesItOccursInEvents}</span>` : ""; // determining the value, the content
-            if (occDaysArr && occDaysArr.length > 0)
-                occurenceContent = occDaysArr.includes(x) ? `<span class="calendar__day--occurence">${timesItOccursInOccs}</span>` : ""; // determining the value, the content
+        let eventContent = ""; // starter content for a day with an event
+        let occurenceContent = ""; // starter content for a day with an occurrence
+        let timesItOccursInEvents = 0; // to figure our how many events this day has
+        let timesItOccursInOccs = 0; // to figure our how many occurrences this day has
+        eventDaysArr.forEach((eventNum) => eventNum === x && timesItOccursInEvents++); // eventDaysArr has duplicates, by design
+        occDaysArr.forEach((occNum) => occNum === x && timesItOccursInOccs++);
+        if (eventDaysArr && eventDaysArr.length > 0)
+            eventContent = eventDaysArr.includes(x) ? `<span class="calendar__day--eventful">${timesItOccursInEvents}</span>` : ""; // determining the value, the content
+        if (occDaysArr && occDaysArr.length > 0)
+            occurenceContent = occDaysArr.includes(x) ? `<span class="calendar__day--occurence">${timesItOccursInOccs}</span>` : ""; // determining the value, the content
 
-            return `<div class="${classes}" ${dateAttr}>
+        return `<div class="${classes}" ${dateAttr}>
             ${eventContent}${occurenceContent}
                 <span>${content}</span>
             </div>`;
-        })
-        .join("");
-    div.innerHTML = html;
+    });
+
+    const weekdayEl = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map(
+        (x) => `<div class="calendar__day calendar__day--name">${x.slice(0, 3)}</div>`
+    );
+
+    // weekdayEl.forEach((x) => html.unshift(x));
+    html = [...weekdayEl, ...html];
+
+    div.innerHTML = html.join("");
     Visual.calendarBlock.appendChild(div);
 }
 

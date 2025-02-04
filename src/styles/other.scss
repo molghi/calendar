@@ -12,24 +12,6 @@
 
 // ================================================================================================
 
-.hidden {
-    display: none !important;
-}
-
-.active {
-    background-color: var(--accent);
-    color: var(--bg);
-}
-
-.invisible {
-    opacity: 0;
-    visibility: hidden;
-}
-
-.moved-down {
-    transform: translateY(30px);
-}
-
 .message {
     border: 2px solid var(--white);
     min-width: 200px;
@@ -45,177 +27,19 @@
     left: 0;
     transition: all 0.3s;
 }
+
 .success {
     border-color: green;
     color: green;
     text-shadow: 0 0 1px green;
     box-shadow: 0 0 5px green;
 }
+
 .error {
     border-color: red;
     color: red;
     text-shadow: 0 0 1px red;
     box-shadow: 0 0 5px red;
-}
-
-.dimmer {
-    opacity: 0.3 !important;
-}
-
-.no-hover {
-    pointer-events: none;
-}
-
-.highlighted {
-    background-color: var(--accent);
-    box-shadow: 0 0 20px var(--accent);
-    color: var(--bg);
-}
-
-// ================================================================================================
-
-.app {
-    display: flex;
-    justify-content: space-between;
-    column-gap: 50px;
-
-    &__column {
-        &:nth-child(1) {
-            max-width: calc(var(--dayBoxSize) * 7 + 2px);
-            flex-basis: calc(var(--dayBoxSize) * 7 + 2px);
-            flex-shrink: 0;
-            flex-grow: 1;
-        }
-        &:nth-child(2) {
-            flex-shrink: 1;
-            flex-grow: 0;
-            flex-basis: 500px;
-            max-width: 500px;
-        }
-    }
-    &__calendar {
-    }
-    &__field {
-        // height: 600px;
-        height: 84vh;
-        overflow-x: hidden;
-        position: relative;
-        // border: 1px solid #111;
-        div:nth-child(1) {
-            transition: all 0.3s;
-        }
-    }
-}
-
-// ================================================================================================
-.day-block__box {
-    // padding: 10px;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 10;
-    width: 100%;
-    transition: all 0.3s;
-}
-
-.day-block {
-    background-color: #181818;
-    // box-shadow: 0 0 60px #333;
-    padding: 20px;
-    padding-bottom: 30px;
-    &__date {
-        margin-bottom: 10px;
-        display: flex;
-        align-items: center;
-        column-gap: 20px;
-        span:nth-child(1) {
-            font-size: 28px;
-            text-shadow: 0 0 2px var(--accent);
-        }
-        span:nth-child(2) {
-            font-size: 16px;
-        }
-    }
-    &__row {
-        margin-bottom: 20px;
-    }
-    &__temp {
-        font-size: 14px;
-    }
-    &__events,
-    &__occurrences {
-        margin-bottom: 20px;
-        display: flex;
-        flex-direction: column;
-        row-gap: 10px;
-    }
-    &__events-title,
-    &__occurrences-title {
-        display: flex;
-        align-items: center;
-        column-gap: 10px;
-        span {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background-color: var(--accent);
-            color: var(--bg);
-            height: 20px;
-            width: 20px;
-            border-radius: 50%;
-        }
-    }
-    &__event {
-        background-color: var(--bg);
-        padding: 10px;
-    }
-    &__event-title {
-    }
-    &__event-row,
-    &__occurrence-row {
-        display: flex;
-        align-items: center;
-        column-gap: 50px;
-    }
-    &__msg {
-        font-style: italic;
-        font-size: 14px;
-    }
-    &__event-date {
-    }
-    &__event-time {
-    }
-    &__event-description {
-    }
-    &__occurrences {
-    }
-    &__occurrences-title {
-    }
-    &__occurrence {
-        background-color: var(--bg);
-        padding: 10px;
-    }
-    &__occurrence-title {
-    }
-    &__occurrence-date {
-    }
-    &__occurrence-time {
-    }
-    &__occurrence-description {
-    }
-
-    &__info {
-        margin-bottom: 10px;
-        font-size: 14px;
-        opacity: 0.5;
-    }
-    &__percent {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        font-size: 14px;
-        opacity: 0.5;
-    }
 }
 
 // ================================================================================================
@@ -227,11 +51,14 @@
         text-shadow: 0 0 2px var(--accent);
         margin-bottom: 10px;
     }
+
     &__msg {
         margin-top: 20px;
         font-size: 14px;
         font-style: italic;
+        opacity: 0.5;
     }
+
     &__list {
         display: flex;
         flex-direction: column;
@@ -241,6 +68,7 @@
         padding: 10px;
         padding-left: 25px;
     }
+
     &__list-item {
         &-title {
             cursor: default;

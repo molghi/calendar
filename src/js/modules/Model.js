@@ -4,6 +4,8 @@ import LS from "./model-dependencies/localStorage.js";
 
 import { differenceInDays, differenceInWeeks, differenceInMonths, differenceInYears, intervalToDuration, getDayOfYear } from "date-fns";
 
+import { exportAsJson } from "./model-dependencies/export.js";
+
 class Model {
     #state = {
         months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
@@ -18,13 +20,14 @@ class Model {
         editingItem: "",
         everyMinTimer: "",
         selectedEventsOrOccurences: "events",
+        accentColor: "#fd8d64",
     };
 
     constructor() {
         this.fetchEventOccurrences(); // fetching from LS
         this.fetchSelectedEventsOrOccurences();
+        this.fetchAccentColor();
         console.log(this.#state);
-        this.filterOccsByCat();
     }
 
     // ================================================================================================
@@ -59,6 +62,16 @@ class Model {
             const [date, month, year] = eventObj.date.split("/");
             if (+year === yearNowRendered && +month === monthNowRendered) return eventObj;
         });
+
+        filtered.sort((a, b) => {
+            // sorting chronologically
+            const [date1, month1, year1] = a.date.split("/");
+            const timeOne = new Date(year1, month1 - 1, date1).getTime();
+            const [date2, month2, year2] = b.date.split("/");
+            const timeTwo = new Date(year2, month2 - 1, date2).getTime();
+            return timeOne - timeTwo;
+        });
+
         return filtered;
     }
 
@@ -71,6 +84,16 @@ class Model {
             const [date, month, year] = occObj.date.split("/");
             if (+year === yearNowRendered && +month === monthNowRendered) return occObj;
         });
+
+        filtered.sort((a, b) => {
+            // sorting chronologically
+            const [date1, month1, year1] = a.date.split("/");
+            const timeOne = new Date(year1, month1 - 1, date1).getTime();
+            const [date2, month2, year2] = b.date.split("/");
+            const timeTwo = new Date(year2, month2 - 1, date2).getTime();
+            return timeOne - timeTwo;
+        });
+
         return filtered;
     }
 
@@ -212,6 +235,10 @@ class Model {
     addEventOccurrence(obj) {
         let { date, desc, title, type, variable } = obj;
         if (date.includes(".")) date = date.split(".").join("/");
+        date = date
+            .split("/")
+            .map((x) => (x.startsWith("0") ? x.replace("0", "") : x))
+            .join("/");
         const myObj = {
             date,
             description: desc,
@@ -232,6 +259,12 @@ class Model {
 
     // ================================================================================================
 
+    saveToLS() {
+        LS.save("calendarData", this.#state.data, "ref"); // pushing to LS; key, value, type = "ref" for reference
+    }
+
+    // ================================================================================================
+
     // editing an event or occurrence
     editEventOccurrence(obj) {
         const [editingItemType, editingItem] = this.getEditingItem();
@@ -241,6 +274,10 @@ class Model {
         if (obj.date !== editingItem.date) {
             let date = obj.date;
             if (obj.date.includes(".")) date = date.split(".").join("/");
+            date = date
+                .split("/")
+                .map((x) => (x.startsWith("0") ? x.replace("0", "") : x))
+                .join("/");
             editingItem.date = date;
         }
         if (obj.desc !== editingItem.description) editingItem.description = obj.desc;
@@ -433,10 +470,6 @@ class Model {
 
         const withCategory = occs.filter((occObj) => {
             const [date, month, year] = occObj.date.split("/");
-            // console.log(+month);
-            // console.log(monthShowing);
-            // console.log(+year);
-            // console.log(yearShowing);
             return occObj.category && +month === monthShowing && +year === yearShowing; // all occurrences that have category assigned and happened in the observing month-year
         });
         const allCategories = withCategory.map((occObj) => occObj.category.toLowerCase().trim()); // a flat arr of strings: all cats
@@ -446,7 +479,6 @@ class Model {
         allCategories.forEach((catString, index, arr) => (map[catString] += 1)); // filling it properly to see how many times a set thing occurs in an array
 
         const frequenciesSorted = Object.values(map).sort((a, b) => b - a);
-        // console.log(frequenciesSorted);
         const repeated = Object.keys(map).filter((cat) => map[cat] > 1); // getting those that are repeated more than once
 
         const repeatedOccsObjs = occs.filter((occObj) => repeated.includes(occObj.category.toLowerCase())); // the objects of all those occurrences
@@ -456,7 +488,6 @@ class Model {
             if (value === 1) delete map[keys[index]];
         });
 
-        console.log(yearShowing, monthShowing);
         const daysInThisMonth = new Date(yearShowing, monthShowing, 1 - 1).getDate();
         return [map, daysInThisMonth];
     }
@@ -469,6 +500,69 @@ class Model {
         let result = occs.filter((occObj) => occObj.category.toLowerCase() === categoryString).map((obj) => obj.date);
         result = result.map((dateString) => dateString.split("/").reverse().join(","));
         return result;
+    }
+
+    // ================================================================================================
+
+    // returns date today, num of events, num of occurrences
+    getTodayData() {
+        const dateToday = this.#state.nowDate.slice().reverse().join("/");
+        const dateTodayShortened = this.#state.nowDate
+            .slice()
+            .reverse()
+            .map((x) => (x.toString().length > 2 ? x.toString().slice(2) : x))
+            .join("/");
+        const events = this.getEvents();
+        const occs = this.getOccurrences();
+        const eventsToday = events.filter((eventObj) => eventObj.date === dateToday);
+        const occurrencesToday = occs.filter((occurrenceObj) => occurrenceObj.date === dateToday);
+        return [dateTodayShortened, eventsToday.length, occurrencesToday.length];
+    }
+
+    // ================================================================================================
+
+    // checking the input accent color -- returns string (color in rgb)
+    checkNewColor(newColor) {
+        // mimicking DOM addition to get the computed color
+        const span = document.createElement("span");
+        document.body.appendChild(span);
+        span.style.color = newColor;
+        let color = window.getComputedStyle(span).color;
+        document.body.removeChild(span);
+
+        const rgbValues = color
+            .slice(4, -1)
+            .split(",")
+            .map((x) => +x.trim()); // just the rgb values (r,g,b)
+
+        if (rgbValues[0] < 40 && rgbValues[1] < 40 && rgbValues[2] < 40) return `rgb(0, 128, 0)`; // return green if it is too dark
+
+        return color;
+    }
+
+    // ================================================================================================
+
+    changeAccentColor(value) {
+        this.#state.accentColor = value;
+        LS.save("calendarAccentColor", this.#state.accentColor, "prim"); // pushing to LS; key, value, type = "prim" for primitive type
+    }
+
+    fetchAccentColor() {
+        const fetched = LS.get("calendarAccentColor", "prim");
+        if (!fetched) return;
+        this.#state.accentColor = fetched;
+    }
+
+    getAccentColor = () => this.#state.accentColor;
+
+    // ================================================================================================
+
+    exportAsJson() {
+        exportAsJson();
+    }
+
+    exportAsTxt() {
+        exportAsTxt();
     }
 
     // ================================================================================================

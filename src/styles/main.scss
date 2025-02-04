@@ -1,5 +1,8 @@
 @use "./initial"; // styles reset and general things for the proj
 @use "./calendar";
-@use "./form";
+@use "./app";
 @use "./eventsOccurrences";
 @use "./other";
+@use "./dayBlock";
+@use "./actions";
+@use "./utilities";
