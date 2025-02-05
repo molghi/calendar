@@ -20,7 +20,8 @@ function calendarClicksHandler(actionType, el) {
         Visual.removeEventsOccurrences(); // removing Events/Occurrences block
         const clickedDate = el.dataset.date.split(",").reverse().join("/"); // 'el' is the day element that was clicked
         Visual.setClickedDay(clickedDate); // setting the string of the date of the clicked day -- needed if I render the Add Event form but then I want to switch to the Add Occurrence form
-        Visual.renderForm("event", true, clickedDate); // rendering the Add form -- 'true' for 'with animation' (when rendering)
+        const userFormPreference = Logic.getFormPreference(); // getting the value of what form to render: Add Event or Add Occurrence
+        Visual.renderForm(userFormPreference, true, clickedDate); // rendering the Add form -- 'true' for 'with animation' (when rendering)
         Visual.handleFormSubmission(formHandler); // handling this form submission
         Visual.setFormIsShown(); // setting that form is shown (boolean) and if true .calendar__days receives pointer-events:none (no hovering)
     }

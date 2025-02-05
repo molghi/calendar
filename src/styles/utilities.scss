@@ -30,6 +30,22 @@
     background-color: var(--accent);
     box-shadow: 0 0 20px var(--accent);
     color: var(--bg);
+
+    span.calendar__day--eventful {
+        color: var(--accent);
+        &:after {
+            border-top: 25px solid var(--bg);
+        }
+    }
+    span.calendar__day--occurence {
+        color: var(--white);
+        background-color: var(--bg);
+        box-shadow: 0 0 10px var(--bg);
+    }
+}
+
+.overflow-hidden {
+    overflow: hidden;
 }
 
 // ================================================================================================

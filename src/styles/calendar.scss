@@ -23,9 +23,15 @@
         transition: box-shadow 0.3s;
         cursor: pointer;
         position: relative;
+        @media (max-width: #{initial.$md4}px) {
+            padding: 3px;
+        }
 
         span {
             pointer-events: none;
+            @media (max-width: #{initial.$md4}px) {
+                font-size: 12px;
+            }
         }
 
         &--empty {
@@ -88,6 +94,10 @@
             font-size: 16px;
             text-align: center;
             max-height: 30px;
+            @media (max-width: #{initial.$md4}px) {
+                font-size: 12px;
+                max-height: 25px;
+            }
         }
 
         span.calendar__day--eventful {
@@ -106,6 +116,17 @@
                 border-left: 25px solid transparent;
                 border-right: 0px solid transparent;
                 border-top: 25px solid var(--accent);
+            }
+            @media (max-width: #{initial.$md3}px) {
+                font-size: 12px;
+            }
+            @media (max-width: #{initial.$md4}px) {
+                font-size: 11px;
+                &:after {
+                    border-left: 24px solid transparent;
+                    border-right: 0px solid transparent;
+                    border-top: 24px solid var(--accent);
+                }
             }
         }
 
@@ -133,6 +154,18 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            @media (max-width: #{initial.$md3}px) {
+                bottom: 5px;
+                right: 5px;
+                font-size: 13px;
+            }
+            @media (max-width: #{initial.$md4}px) {
+                font-size: 0;
+                width: 10px;
+                height: 10px;
+                bottom: 5px;
+                right: 5px;
+            }
         }
 
         &:hover {
@@ -163,12 +196,23 @@
         align-items: center;
         justify-content: space-between;
         position: relative;
+        @media (max-width: 620px) {
+            margin-bottom: 12px;
+        }
     }
 
     &__header {
         font-size: 29.5px;
         text-shadow: 0 0 2px var(--accent);
         padding-left: 18px;
+        @media (max-width: 620px) {
+            font-size: 22px;
+        }
+        @media (max-width: #{initial.$md4}px) {
+            // font-size: 16px;
+            font-size: 15.5px;
+            padding-left: 5px;
+        }
     }
 
     &__header-btn {
@@ -180,12 +224,39 @@
         top: 5px;
         &--prev {
             left: -35px;
+            @media (max-width: #{initial.$md1}px) {
+                left: -24px;
+            }
+            @media (max-width: #{initial.$md2}px) {
+                left: -45px;
+            }
+            // @media (max-width: 680px){}
+            // @media (max-width: #{initial.$md4}px) {
+            @media (max-width: 680px) {
+                right: 60px;
+                left: initial;
+                top: -45px;
+            }
         }
         &--next {
             right: -35px;
+            @media (max-width: #{initial.$md1}px) {
+                right: -24px;
+            }
+            @media (max-width: #{initial.$md2}px) {
+                right: -45px;
+            }
+            // @media (max-width: #{initial.$md4}px) {
+            @media (max-width: 680px) {
+                right: 0;
+                top: -45px;
+            }
         }
         svg {
             width: 24px;
+            @media (max-width: #{initial.$md2}px) {
+                width: 35px;
+            }
             path {
                 fill: var(--accent);
             }
@@ -221,6 +292,9 @@
         }
         &:active {
             opacity: 0.5;
+        }
+        @media (max-width: #{initial.$md4}px) {
+            // font-size: 16px;
         }
     }
 }

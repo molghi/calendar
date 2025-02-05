@@ -37,6 +37,9 @@ function renderDayBlock(date, eventsThisDay, occsThisDay, tempDist, weekday) {
                         </div>`;
     Visual.appFieldBlock.appendChild(div);
 
+    const heightNow = div.getBoundingClientRect().height;
+    Visual.appFieldBlock.style.minHeight = heightNow + "px"; // setting minimal height because I temporarily apply overflow hidden to this block (when I hover)
+
     setTimeout(() => {
         div.classList.remove("invisible"); // some animation
     }, 100);
@@ -50,8 +53,10 @@ function getEventsHtml(eventsThisDay) {
     return eventsThisDay.length === 0
         ? [`<div class="day-block__msg">No entries</div>`]
         : eventsThisDay.map((eventObj) => {
-              const timeHtml = !eventObj.time ? "" : `<div class="day-block__event-time">${eventObj.time}</div>`;
-              const descHtml = !eventObj.description ? "" : `<div class="day-block__event-description">${eventObj.description}</div>`;
+              const timeHtml = !eventObj.time ? "" : `<div class="day-block__event-time"><span>Time:</span><span>${eventObj.time}</span></div>`;
+              const descHtml = !eventObj.description
+                  ? ""
+                  : `<div class="day-block__event-description"><span><span>Note:</span>${eventObj.description}</span></div>`;
               return `<div class="day-block__event">
                                 <div class="day-block__event-title">${eventObj.title}</div>
                                 ${timeHtml}
@@ -68,8 +73,12 @@ function getOccurrencesHtml(occsThisDay) {
     return occsThisDay.length === 0
         ? [`<div class="day-block__msg">No entries</div>`]
         : occsThisDay.map((occObj) => {
-              const catHtml = !occObj.category ? "" : `<div class="day-block__occurrence-category">${occObj.category}</div>`;
-              const descHtml = !occObj.description ? "" : `<div class="day-block__occurrence-description">${occObj.description}</div>`;
+              const catHtml = !occObj.category
+                  ? ""
+                  : `<div class="day-block__occurrence-category"><span>Category:</span><span>${occObj.category}</span></div>`;
+              const descHtml = !occObj.description
+                  ? ""
+                  : `<div class="day-block__occurrence-description"><span><span>Note:</span>${occObj.description}</span></div>`;
               return `<div class="day-block__occurrence">
                                 <div class="day-block__occurrence-title">${occObj.title}</div>
                                 ${catHtml}

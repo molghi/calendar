@@ -4,6 +4,10 @@
     display: flex;
     justify-content: space-between;
     column-gap: 50px;
+    @media (max-width: #{initial.$md2}px) {
+        flex-direction: column;
+        row-gap: 50px;
+    }
 
     &__column {
         &:nth-child(1) {
@@ -11,12 +15,22 @@
             flex-basis: calc(var(--dayBoxSize) * 7 + 2px);
             flex-shrink: 0;
             flex-grow: 1;
+            @media (max-width: #{initial.$md2}px) {
+                max-width: 100%;
+                margin: 0 auto;
+                flex: 1 1 100%;
+            }
         }
         &:nth-child(2) {
             flex-shrink: 1;
             flex-grow: 0;
             flex-basis: 500px;
             max-width: 500px;
+            @media (max-width: #{initial.$md2}px) {
+                max-width: 100%;
+                flex: 1 1 100%;
+                padding-bottom: 100px;
+            }
         }
     }
 
@@ -25,12 +39,12 @@
 
     &__field {
         // height: 600px;
-        height: 84vh;
+        max-height: 84vh;
         overflow-x: hidden;
         position: relative;
         // border: 1px solid #111;
         div:nth-child(1) {
-            transition: all 0.3s;
+            transition: all 0.2s;
         }
     }
 
@@ -45,6 +59,9 @@
         display: flex;
         flex-direction: column;
         row-gap: 30px;
+        @media (max-width: #{initial.$md4}px) {
+            row-gap: 20px;
+        }
     }
 
     &__form-header {
@@ -60,10 +77,16 @@
             &:hover {
                 opacity: 1;
             }
+            @media (max-width: #{initial.$md3}px) {
+                padding-left: 0;
+            }
         }
         @media (max-width: #{initial.$md1}px) {
             label {
                 font-size: 11.9px;
+                @media (max-width: #{initial.$md3}px) {
+                    font-size: 10px;
+                }
             }
         }
     }
@@ -75,6 +98,10 @@
         @media (max-width: #{initial.$md1}px) {
             // padding-top: 20px;
             padding-top: 25px;
+        }
+        @media (max-width: #{initial.$md4}px) {
+            font-size: 23px;
+            padding-left: 0;
         }
     }
 
@@ -104,6 +131,10 @@
     &__form-input-box {
         display: flex;
         column-gap: 30px;
+        @media (max-width: #{initial.$md4}px) {
+            flex-direction: column;
+            row-gap: 20px;
+        }
     }
 
     &__form-input {
@@ -132,6 +163,9 @@
         }
         @media (max-width: #{initial.$md1}px) {
             max-height: 270px;
+        }
+        @media (max-width: #{initial.$md4}px) {
+            height: 80px;
         }
     }
 

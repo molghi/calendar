@@ -12,6 +12,20 @@ $fontsize: 16px;
     --dayFontSize: 25px;
 }
 
+@media (max-width: 620px) {
+    :root {
+        --dayBoxSize: 60px;
+        --dayFontSize: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    :root {
+        --dayBoxSize: 40px;
+        --dayFontSize: 14px;
+    }
+}
+
 // =============================================================================================
 
 *,
@@ -32,7 +46,7 @@ body {
     background-color: $bg;
     color: var(--accent);
     font-size: $fontsize;
-    font-family: "Share Tech Mono", "Monaco", "Courier New", monospace, sans-serif;
+    font-family: "Share-TechMono", "Share Tech Mono", "Monaco", "Courier New", monospace, sans-serif;
 }
 
 input,
@@ -91,8 +105,10 @@ $minwidth: 320px;
 
 $mw: 1170; // the width of the content, the container width
 
-$md1: $mw + 12; // 1st breakpoint
-$md2: 992.98; // for tablets, 1024х768px is a size of a little PC monitor or iPad
+// $md1: $mw + 12; // 1st breakpoint
+$md1: 1260;
+$md2: 1023;
+// $md2: 992.98; // for tablets, 1024х768px is a size of a little PC monitor or iPad
 $md3: 767.98; // for large phones; less than 768px is the hamburger menu time
 $md4: 479.98; // for small phones
 

@@ -10,7 +10,6 @@
         justify-content: space-between;
         column-gap: 20px;
         row-gap: 10px;
-        flex-wrap: wrap;
         background-color: var(--bg);
         position: sticky;
         z-index: 10;
@@ -18,10 +17,17 @@
         top: 0;
         left: 0;
         right: 0;
+        @media (max-width: #{initial.$md1}px) {
+            flex-wrap: wrap;
+        }
+        @media (max-width: #{initial.$md3}px) {
+            flex-direction: column;
+            align-items: start;
+        }
     }
 
     &__title {
-        font-size: 25px;
+        font-size: 24px;
         text-shadow: 0 0 2px var(--accent);
         position: relative;
         display: inline-block;
@@ -29,15 +35,21 @@
             font-size: 14px;
             position: absolute;
             top: 0px;
-            right: -20px;
+            right: -25px;
             background-color: var(--accent);
             color: var(--bg);
-            height: 15px;
-            width: 15px;
+            height: 20px;
+            width: 20px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+        @media (max-width: #{initial.$md1}px) {
+            // font-size: 20px;
+        }
+        @media (max-width: #{initial.$md4}px) {
+            font-size: 20px;
         }
     }
 
@@ -70,11 +82,17 @@
             display: -webkit-box;
             -webkit-box-orient: vertical;
             -webkit-line-clamp: 2; /* Limit to 2 lines */
+            @media (max-width: #{initial.$md4}px) {
+                font-size: 14px;
+            }
         }
 
         &-minor-title {
             opacity: 0.5;
             font-size: 16px;
+            @media (max-width: #{initial.$md4}px) {
+                font-size: 14px;
+            }
         }
 
         &-date,
@@ -125,6 +143,14 @@
                 opacity: 0.3;
             }
         }
+
+        @media (max-width: #{initial.$md4}px) {
+            font-size: 14px;
+            display: flex;
+            flex-direction: column;
+            row-gap: 5px;
+            padding: 10px;
+        }
     }
 
     &__item-row {
@@ -136,11 +162,19 @@
         div {
             flex: 1 1 50%;
         }
+
+        @media (max-width: #{initial.$md4}px) {
+            flex-direction: column;
+            align-items: start;
+            row-gap: 5px;
+            margin-bottom: 0;
+        }
     }
 
     &__switch {
         display: flex;
         align-items: center;
+        margin-right: 5px;
 
         &-btn {
             background-color: var(--bg);

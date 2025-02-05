@@ -208,6 +208,10 @@ class View {
 
     // highlighting or de-highlighting today day in Calendar
     toggleHighlightToday(todayString, toggleBooleanFlag) {
+        const firstDayDate = document.querySelector(".calendar__day[data-date]").dataset.date; // the date attr of the first not empty day of the showing month
+        const todayMonth = todayString.split(",")[1];
+        const shownMonth = firstDayDate.split(",")[1];
+        if (todayMonth !== shownMonth) return; // if the shown month is not the now month, no today-highlighting
         const todayEl = document.querySelector(`.calendar [data-date="${todayString}"]`);
         if (!toggleBooleanFlag) {
             // de-highlight or make dimmer
@@ -258,9 +262,15 @@ class View {
     // updating document title
     updateDocTitle(value) {
         let [dateString, eventsNum, occsNum] = value;
-        if (eventsNum > 0 || occsNum > 0) {
-            document.title = `Calendar - ${dateString} - Today: 1${eventsNum + occsNum}`;
-        } else document.title = `Calendar — ${dateString}`;
+        let base = `Calendar — ${dateString}`;
+
+        if (occsNum > 0 && eventsNum === 0) {
+            document.title = `${base} — Occurrences: ${occsNum}`;
+        } else if (eventsNum > 0 && occsNum === 0) {
+            document.title = `* ${base} — Events: ${eventsNum}`;
+        } else if (eventsNum > 0 && occsNum > 0) {
+            document.title = `* ${base} — Events: ${eventsNum}, Occurrences: ${occsNum}`;
+        } else document.title = base;
     }
 
     // ================================================================================================

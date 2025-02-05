@@ -10,6 +10,10 @@ function handleCalendarHoversIn(actionType, el) {
         const elDate = el.dataset.date.split(",").reverse().join("/"); // getting the string of the date of 'el'
         const [eventsThisDay, occsThisDay, temporalDistance, weekday] = Logic.getDayData(elDate); // getting this day data
         Visual.renderDayBlock(elDate, eventsThisDay, occsThisDay, temporalDistance, weekday); // rendering hover-activated block on the right
+        Visual.appFieldBlock.classList.add("overflow-hidden"); // if there is a vertical scroll, hide it while hovering over a day
+        setTimeout(() => {
+            Visual.appFieldBlock.scrollTop = 0; // scrolling to the top of the scrollable container
+        }, 300);
     } else {
         // it was a hover in Routines block -- need to get all dates that have this category (here 'el') and highlight them
         const allSuchDates = Logic.getDates(el); // all dates that have this category
@@ -26,6 +30,7 @@ function handleCalendarHoversOut(actionType, el) {
     if (actionType === `day-block`) {
         Visual.makeDimmer(Visual.appFieldBlock.firstElementChild, "restore"); // removing the dimmer class on what is shown on the right
         Visual.removeDayBlock(); // removing hover-activated block on the right
+        Visual.appFieldBlock.classList.remove("overflow-hidden"); // if there is a vertical scroll, hide it while hovering over a day
     } else {
         // it was a hover-out in Routines block -- get all dates that have this category ('el') and de-highlight them
         const allSuchDates = Logic.getDates(el); // all dates that have this category

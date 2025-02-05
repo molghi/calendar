@@ -36,13 +36,16 @@ function renderRoutinesBlock(data) {
     const div = document.createElement("div");
     div.classList.add("routines");
 
+    const sortedByFrequency = Object.entries(map).sort((a, b) => b[1] - a[1]); // sorting by frequency: higher freq will be at the top
+
     // getting the needed html:
-    const activitiesHtml = Object.keys(map).map((key) => {
-        const title = key[0].toUpperCase() + key.slice(1).toLowerCase(); // capitalising
-        const times = map[key];
-        const percent = (times / daysInThisMonth) * 100; // calc-ing percentage
+    const activitiesHtml = sortedByFrequency.map((entry) => {
+        const [entryTitle, entryTimes] = entry;
+        const title = entryTitle[0].toUpperCase() + entryTitle.slice(1).toLowerCase(); // capitalising
+        // const times = map[entryTimes];
+        const percent = (entryTimes / daysInThisMonth) * 100; // calc-ing percentage
         return `<li class="routines__list-item">
-                    <span class="routines__list-item-title">${title}</span> — <span>${times} out of ${daysInThisMonth} days (${percent.toFixed()}%)</span>
+                    <span class="routines__list-item-title">${title}</span> — <span>${entryTimes} out of ${daysInThisMonth} days (${percent.toFixed()}%)</span>
                 </li>`;
     });
 

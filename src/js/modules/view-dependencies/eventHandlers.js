@@ -7,6 +7,9 @@ function handleCalendarClicks(handler) {
     Visual.calendarBlock.addEventListener("click", function (e) {
         if (e.target.closest(".calendar__header-btn")) {
             // it was a click in calendar-header: on the prev or next btn to show next/prev month
+            // const btns = [...document.querySelectorAll(".calendar__header-btn")];
+            if (document.querySelector("form")) return; // btns.forEach((btn) => btn.classList.add("no-hover")); // if there is a form, you cannot view any other month
+            // btns.forEach((btn) => btn.classList.remove("no-hover"));
             const btn = e.target.closest(".calendar__header-btn");
             const btnType = btn.classList.contains("calendar__header-btn--next") ? "next" : "prev";
             handler(btnType);
@@ -14,6 +17,9 @@ function handleCalendarClicks(handler) {
 
         if (e.target.closest(".calendar__now-btn")) {
             // it was a click on 'Back to Now' btn
+            // const btn = document.querySelector(".calendar__now-btn");
+            if (document.querySelector("form")) return; // btn.classList.add("no-hover"); // if there is a form, you cannot jump back to now
+            // btn.classList.remove("no-hover");
             const btnType = "now";
             handler(btnType);
         }

@@ -27,12 +27,14 @@ class Model {
         everyMinTimer: "",
         selectedEventsOrOccurences: "events", // by default (on app start) is events; changed later
         accentColor: "#fd8d64", // changed later
+        renderedFormChoice: "event", // the Add/Edit form: the switch btn that shows Add Event form or Add Occurrence: clicking on it sets another user preference
     };
 
     constructor() {
         this.fetchEventOccurrences(); // fetching from LS
         this.fetchSelectedEventsOrOccurences(); // fetching from LS
         this.fetchAccentColor(); // fetching from LS
+        this.fetchFormPreference(); // fetching from LS
     }
 
     // ================================================================================================
@@ -60,6 +62,22 @@ class Model {
         const fetched = LS.get("calendarUserPreference", "prim");
         if (!fetched) return;
         this.#state.selectedEventsOrOccurences = fetched;
+    }
+
+    // ================================================================================================
+
+    // setting, getting and fetching which Add form is displayed first: if a user clicked "Event" btn there last, it'll Add Event, and the same for 'Occurrence'
+    setFormPreference(value) {
+        this.#state.renderedFormChoice = value; // setting user preference
+        LS.save("calendarFormUserPreference", this.#state.renderedFormChoice, "prim"); // pushing to LS as a primitive type
+    }
+
+    getFormPreference = () => this.#state.renderedFormChoice;
+
+    fetchFormPreference() {
+        const fetched = LS.get("calendarFormUserPreference", "prim");
+        if (!fetched) return;
+        this.#state.renderedFormChoice = fetched;
     }
 
     // ================================================================================================

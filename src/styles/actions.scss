@@ -56,6 +56,9 @@
             background-color: var(--accent);
             color: var(--bg);
         }
+        @media (max-width: #{initial.$md2}px) {
+            padding: 10px 15px;
+        }
     }
 
     &__action--color {

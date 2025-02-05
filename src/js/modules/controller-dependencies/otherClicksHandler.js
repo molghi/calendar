@@ -7,11 +7,13 @@ import { Logic, Visual, formHandler } from "../../Controller.js";
 function otherClicksHandler(type, el) {
     if (type === "occurrence") {
         // render occurrence form
+        Logic.setFormPreference("occurrence"); // setting which Add form is displayed first: if a user clicked "Occurrence" btn there last, it'll be Add Occurrence
         const clickedDate = Visual.getClickedDay(); // getting the string of the date of the clicked day el
         Visual.renderForm("occurrence", false, clickedDate); // 'false' for 'no animation' (when rendering)
         Visual.handleFormSubmission(formHandler); // handling form submission: on submit formHandler runs
     } else if (type === "event") {
         // render event form
+        Logic.setFormPreference("event"); // setting which Add form is displayed first: if a user clicked "Event" btn there last, it'll be Add Event
         const clickedDate = Visual.getClickedDay(); // getting the string of the date of the clicked day el
         Visual.renderForm("event", false, clickedDate); // 'false' for 'no animation' (when rendering)
         Visual.handleFormSubmission(formHandler); // handling form submission: on submit formHandler runs
