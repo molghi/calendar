@@ -12,13 +12,6 @@ function listenKeys(handler) {
             if (e.code === `ArrowRight`) type = "next";
             handler(type);
         }
-
-        // if (e.code === "KeyZ") {
-        //     const newCol = prompt("Enter a new UI colour:");
-        //     if (!newCol) return;
-        //     document.documentElement.style.setProperty("--accent", newCol); // changing the accent colour
-        //     console.log(`UI accent colour now: ${newCol}`);
-        // }
     });
 }
 

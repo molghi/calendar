@@ -31,3 +31,35 @@
     box-shadow: 0 0 20px var(--accent);
     color: var(--bg);
 }
+
+// ================================================================================================
+
+.message {
+    border: 2px solid var(--white);
+    min-width: 200px;
+    width: 100%;
+    background-color: var(--bg);
+    color: var(--white);
+    text-shadow: 0 0 1px var(--white);
+    box-shadow: 0 0 5px var(--white);
+    padding: 10px 20px;
+    font-size: 20px;
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    transition: all 0.3s;
+}
+
+.success {
+    border-color: green;
+    color: green;
+    text-shadow: 0 0 1px green;
+    box-shadow: 0 0 5px green;
+}
+
+.error {
+    border-color: red;
+    color: red;
+    text-shadow: 0 0 1px red;
+    box-shadow: 0 0 5px red;
+}

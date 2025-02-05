@@ -1,7 +1,6 @@
 @use "./initial";
 
 .day-block__box {
-    // padding: 10px;
     position: absolute;
     top: 0;
     left: 0;
@@ -12,9 +11,9 @@
 
 .day-block {
     background-color: #181818;
-    // box-shadow: 0 0 60px #333;
     padding: 20px;
     padding-bottom: 30px;
+
     &__date {
         margin-bottom: 10px;
         display: flex;
@@ -28,12 +27,15 @@
             font-size: 16px;
         }
     }
+
     &__row {
         margin-bottom: 20px;
     }
+
     &__temp {
         font-size: 14px;
     }
+
     &__events,
     &__occurrences {
         margin-bottom: 20px;
@@ -41,6 +43,7 @@
         flex-direction: column;
         row-gap: 10px;
     }
+
     &__events-title,
     &__occurrences-title {
         display: flex;
@@ -57,22 +60,27 @@
             border-radius: 50%;
         }
     }
+
     &__event {
         background-color: var(--bg);
         padding: 10px;
     }
+
     &__event-title {
     }
+
     &__event-row,
     &__occurrence-row {
         display: flex;
         align-items: center;
         column-gap: 50px;
     }
+
     &__msg {
         font-style: italic;
         font-size: 14px;
     }
+
     &__event-date {
     }
     &__event-time {
@@ -83,10 +91,12 @@
     }
     &__occurrences-title {
     }
+
     &__occurrence {
         background-color: var(--bg);
         padding: 10px;
     }
+
     &__occurrence-title {
     }
     &__occurrence-date {
@@ -101,6 +111,7 @@
         font-size: 14px;
         opacity: 0.5;
     }
+
     &__percent {
         position: absolute;
         top: 20px;

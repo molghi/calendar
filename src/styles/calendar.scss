@@ -25,7 +25,6 @@
         position: relative;
 
         span {
-            // color: var(--white);
             pointer-events: none;
         }
 
@@ -34,7 +33,6 @@
             position: relative;
             width: 80px;
             height: 80px;
-            // background-color: rgba(0, 0, 0, 0.15);
             background-color: #111;
             overflow: hidden;
             &::before,
@@ -67,6 +65,7 @@
                 opacity: 0.5;
             }
         }
+
         &--passed {
             background-color: #111;
             span {
@@ -74,6 +73,7 @@
                 opacity: 0.4;
             }
         }
+
         &--today {
             background-color: var(--accent);
             box-shadow: 0 0 20px var(--accent);
@@ -134,6 +134,7 @@
             align-items: center;
             justify-content: center;
         }
+
         &:hover {
             span.calendar__day--occurence {
                 color: var(--white);
@@ -150,6 +151,7 @@
                 opacity: 1;
             }
         }
+
         &:active {
             opacity: 0.8;
         }
@@ -204,6 +206,7 @@
         text-align: right;
         margin-top: 20px;
     }
+
     &__now-btn {
         padding: 0;
         border: none;

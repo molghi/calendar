@@ -20,8 +20,7 @@ function processInput(event) {
             addFromImported(jsonData); // adding to the state and pushing to LS
             Visual.showMessage("success", "Import successful!");
 
-            // now all must be re-rendered
-            renderThings();
+            renderThings(); // now all must be re-rendered
         } catch (err) {
             console.error("Invalid input file", err); // Error handling
             Visual.showMessage("error", `Invalid input file! You can import only JSON and it must be formatted the same as what you can export.`);
@@ -80,19 +79,19 @@ function checkValidInput(data) {
 
 // ================================================================================================
 
-// dependency of 'processInput' --- the import was successful, so adding to the state and pushing to LS
+// dependency of 'processInput' --- the import was successful, so now adding to the state and pushing to LS
 function addFromImported(data) {
     const { events: importedEvents, occurrences: importedOccs } = data;
 
     const stateEvents = Logic.getEvents();
-    const stateEventsAddedDates = stateEvents.map((obj) => obj.added);
+    const stateEventsAddedDates = stateEvents.map((obj) => obj.added); // getting the array of only date ISO strings of all events
     const stateOccurrences = Logic.getOccurrences();
     const stateOccsAddedDates = stateOccurrences.map((obj) => obj.added);
 
     if (importedEvents.length > 0) {
         importedEvents.forEach((importedEventObj) => {
             if (stateEventsAddedDates.includes(importedEventObj.added)) {
-                // means state already has this event, so I replace it --> replace what can be changed
+                // means state already has this event, so I update it --> update what can be changed
                 const indexInState = Logic.getEvents().findIndex((eventObj) => eventObj.added === importedEventObj.added);
                 Logic.getEvents()[indexInState].date = importedEventObj.date;
                 Logic.getEvents()[indexInState].description = importedEventObj.description;
@@ -108,14 +107,14 @@ function addFromImported(data) {
     if (importedOccs.length > 0) {
         importedOccs.forEach((importedOccObj) => {
             if (stateOccsAddedDates.includes(importedOccObj.added)) {
-                // means state already has this event, so I replace it --> replace what can be changed
+                // means state already has this occurrence, so I update it --> update what can be changed
                 const indexInState = Logic.getOccurrences().findIndex((occObj) => occObj.added === importedOccObj.added);
                 Logic.getOccurrences()[indexInState].date = importedOccObj.date;
                 Logic.getOccurrences()[indexInState].description = importedOccObj.description;
                 Logic.getOccurrences()[indexInState].category = importedOccObj.category;
                 Logic.getOccurrences()[indexInState].title = importedOccObj.title;
             } else {
-                // means state doesn't have this event, so I just push it
+                // means state doesn't have this occurrence, so I just push it
                 Logic.getOccurrences().push(importedOccObj);
             }
         });

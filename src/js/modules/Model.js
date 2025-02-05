@@ -1,17 +1,23 @@
 // Model is responsible for all logic in the app: all computations, calculations, and data operations
 
+// importing dependencies:
 import LS from "./model-dependencies/localStorage.js";
-
-import { differenceInDays, differenceInWeeks, differenceInMonths, differenceInYears, intervalToDuration, getDayOfYear } from "date-fns";
-
 import { exportAsJson } from "./model-dependencies/export.js";
+import { addEventOccurrence, editEventOccurrence, deleteEntry } from "./model-dependencies/addEditDelete.js";
+import validateInput from "./model-dependencies/validate.js";
+import { getEventsByMonth, getOccurrencesByMonth } from "./model-dependencies/getByMonth.js";
+import getThisMonthEventfulDays from "./model-dependencies/getThisMonthEventfulDays.js";
+import filterOccsByCat from "./model-dependencies/filterOccsByCat.js";
+import { getNowTime, defineYearTime, calcMonth, getDayData, calcTemporalDistance } from "./model-dependencies/calculations.js";
+
+// ================================================================================================
 
 class Model {
     #state = {
         months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
         weekdays: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
         nowDate: [],
-        monthToShow: [new Date().getFullYear(), new Date().getMonth() + 1],
+        monthToShow: [new Date().getFullYear(), new Date().getMonth() + 1], // by default (on app start) is the now year and now month; changed later
         hourlyTimer: "",
         data: {
             events: [],
@@ -19,15 +25,14 @@ class Model {
         },
         editingItem: "",
         everyMinTimer: "",
-        selectedEventsOrOccurences: "events",
-        accentColor: "#fd8d64",
+        selectedEventsOrOccurences: "events", // by default (on app start) is events; changed later
+        accentColor: "#fd8d64", // changed later
     };
 
     constructor() {
         this.fetchEventOccurrences(); // fetching from LS
-        this.fetchSelectedEventsOrOccurences();
-        this.fetchAccentColor();
-        console.log(this.#state);
+        this.fetchSelectedEventsOrOccurences(); // fetching from LS
+        this.fetchAccentColor(); // fetching from LS
     }
 
     // ================================================================================================
@@ -37,13 +42,17 @@ class Model {
     getEvents = () => this.#state.data.events;
     getOccurrences = () => this.#state.data.occurrences;
 
+    // getting the arrays of month and weekday names
+    getMonths = () => this.#state.months;
+    getWeekdays = () => this.#state.weekdays;
+
     // ================================================================================================
 
-    // setting and getting and fetching whichever block is displayed on the right (the last clicked by a user) Events or Occurrences
+    // setting, getting and fetching whichever block is displayed on the right (the last clicked by a user) Events or Occurrences
     setSelectedEventsOrOccurences(value) {
-        this.#state.selectedEventsOrOccurences = value;
-        LS.save("calendarUserPreference", this.#state.selectedEventsOrOccurences, "prim"); // pushing to LS
-    } // setting user preference
+        this.#state.selectedEventsOrOccurences = value; // setting user preference
+        LS.save("calendarUserPreference", this.#state.selectedEventsOrOccurences, "prim"); // pushing to LS as a primitive type
+    }
 
     getSelectedEventsOrOccurences = () => this.#state.selectedEventsOrOccurences;
 
@@ -57,55 +66,25 @@ class Model {
 
     // filtering events saved to state: getting only those that are equal to month-year now shown
     getEventsByMonth() {
-        const [yearNowRendered, monthNowRendered] = this.getMonthToShow();
-        const filtered = this.#state.data.events.filter((eventObj) => {
-            const [date, month, year] = eventObj.date.split("/");
-            if (+year === yearNowRendered && +month === monthNowRendered) return eventObj;
-        });
-
-        filtered.sort((a, b) => {
-            // sorting chronologically
-            const [date1, month1, year1] = a.date.split("/");
-            const timeOne = new Date(year1, month1 - 1, date1).getTime();
-            const [date2, month2, year2] = b.date.split("/");
-            const timeTwo = new Date(year2, month2 - 1, date2).getTime();
-            return timeOne - timeTwo;
-        });
-
-        return filtered;
+        return getEventsByMonth();
     }
 
     // ================================================================================================
 
     // filtering occurrences saved to state: getting only those that are equal to month-year now shown
     getOccurrencesByMonth() {
-        const [yearNowRendered, monthNowRendered] = this.getMonthToShow();
-        const filtered = this.#state.data.occurrences.filter((occObj) => {
-            const [date, month, year] = occObj.date.split("/");
-            if (+year === yearNowRendered && +month === monthNowRendered) return occObj;
-        });
-
-        filtered.sort((a, b) => {
-            // sorting chronologically
-            const [date1, month1, year1] = a.date.split("/");
-            const timeOne = new Date(year1, month1 - 1, date1).getTime();
-            const [date2, month2, year2] = b.date.split("/");
-            const timeTwo = new Date(year2, month2 - 1, date2).getTime();
-            return timeOne - timeTwo;
-        });
-
-        return filtered;
+        return getOccurrencesByMonth();
     }
 
     // ================================================================================================
 
-    // the current date
+    // getting and setting the current date
     setNowDate = (value) => (this.#state.nowDate = value); // value is [year, month, date]
     getNowDate = () => this.#state.nowDate;
 
     // ================================================================================================
 
-    // the month that is now rendered
+    // getting and setting the month and year that are now rendered
     setMonthToShow = (value) => (this.#state.monthToShow = value); // value is [yr, mth]
     getMonthToShow = () => this.#state.monthToShow;
 
@@ -113,56 +92,21 @@ class Model {
 
     // get the now time
     getNowTime() {
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = now.getMonth() + 1;
-        const date = now.getDate();
-        const weekday = now.getDay();
-        const hours = now.getHours();
-        const minutes = now.getMinutes();
-        return [now, year, month, date, weekday, hours, minutes];
+        return getNowTime();
     }
 
     // ================================================================================================
 
     // return the time of the year
-    defineYearTime(monthNum) {
-        switch (monthNum) {
-            case 12:
-            case 1:
-            case 2:
-                return "Winter";
-            case 3:
-            case 4:
-            case 5:
-                return "Spring";
-            case 6:
-            case 7:
-            case 8:
-                return "Summer";
-            case 9:
-            case 10:
-            case 11:
-                return "Autumn";
-            default:
-                return null;
-        }
-    }
+    // defineYearTime(monthNum) {
+    //     return defineYearTime(monthNum);
+    // }
 
     // ================================================================================================
 
     // calc how many days are in some month and return other things as well, ready to be rendered
     calcMonth(setYear, setMonth) {
-        let [now, year, month, date, weekday, hours, minutes] = this.getNowTime();
-        if (setYear && setMonth) {
-            // setting custom params, overwriting defaults
-            year = setYear;
-            month = setMonth;
-        }
-        const daysInThisMonth = new Date(year, month, 1 - 1).getDate(); // month here is next month; '1 - 1' means get the first day of the next month and subtract one = prev mth last day
-        const monthWord = this.#state.months[month - 1];
-        const yearTime = this.defineYearTime(month);
-        return [now, year, month, date, weekday, hours, minutes, daysInThisMonth, monthWord, yearTime];
+        return calcMonth(setYear, setMonth);
     }
 
     // ================================================================================================
@@ -186,79 +130,19 @@ class Model {
 
     // validating form input
     validateInput(inputValuesArr, type) {
-        /* NOTE:
-            Add form: event: title, date, time, desc
-            Add form: occurr: title, date, category, desc
-            title is a must (can contain nums or letters)
-            date is a must (can contain only nums, dots or slashes)
-            time is optional (can contain only nums and ':')
-            desc is optional (can contain whatever)
-            category is optional (can contain nums or letters)   */
-        let isValidated = true;
-        let message = "All clear";
-        let [title, date, variable, desc] = inputValuesArr; // 'variable' can be either 'time' or 'category', depends on the 'type'
-
-        if (title.trim().toLowerCase().length === 0) (isValidated = false), (message = "Title is incorrect");
-        if (date.trim().toLowerCase().length === 0) (isValidated = false), (message = "Date is incorrect");
-
-        // using regular expressions with test() to validate each input
-        // if (!/^[a-zA-Z0-9\s]+$/.test(title)) (isValidated = false), (message = "Title is incorrect");
-        // if (!/^[0-9./]+$/.test(date)) (isValidated = false), (message = "Date is incorrect");
-        if (!/^(0?[1-9]|[12]\d|3[01])[./](0?[1-9]|1[0-2])[./]\d{4}$/.test(date))
-            (isValidated = false), (message = "Date is incorrect. The correct format: D/M/YYYY or DD.MM.YYYY");
-
-        if (type === "event") {
-            if (!/^(?:[01]?\d|2[0-3]):[0-5]\d$/.test(variable) && variable.length > 0)
-                (isValidated = false), (message = "Time is incorrect. The correct format: HH:MM (24-hour time)");
-            // if it's type 'event', the 'variable' is 'time' -- if it's 'occurrence', the 'variable' is 'category'
-        } else {
-            // type is occurrence here
-        }
-
-        const capitalise = (value) => value[0].toUpperCase() + value.slice(1).toLowerCase(); // small helper func
-
-        let safeValues = {
-            title: title.trim(),
-            date: date.trim(),
-            variable: variable.trim(),
-            desc: desc.trim(),
-            type: type,
-        };
-
-        // console.log(isValidated, safeValues, message);
-        return [isValidated, safeValues, message];
+        return validateInput(inputValuesArr, type);
     }
 
     // ================================================================================================
 
     // adding an event or occurrence
     addEventOccurrence(obj) {
-        let { date, desc, title, type, variable } = obj;
-        if (date.includes(".")) date = date.split(".").join("/");
-        date = date
-            .split("/")
-            .map((x) => (x.startsWith("0") ? x.replace("0", "") : x))
-            .join("/");
-        const myObj = {
-            date,
-            description: desc,
-            title,
-            added: new Date().toISOString(),
-        };
-        if (type === "event") {
-            myObj.time = variable;
-            this.#state.data.events.push(myObj); // pushing to state
-        } else {
-            // type is occurrence
-            myObj.category = variable;
-            this.#state.data.occurrences.push(myObj); // pushing to state
-        }
-
-        LS.save("calendarData", this.#state.data, "ref"); // pushing to LS; key, value, type = "ref" for reference
+        addEventOccurrence(obj);
     }
 
     // ================================================================================================
 
+    // saving to local storage
     saveToLS() {
         LS.save("calendarData", this.#state.data, "ref"); // pushing to LS; key, value, type = "ref" for reference
     }
@@ -267,31 +151,12 @@ class Model {
 
     // editing an event or occurrence
     editEventOccurrence(obj) {
-        const [editingItemType, editingItem] = this.getEditingItem();
-
-        // editing:
-        if (obj.title !== editingItem.title) editingItem.title = obj.title;
-        if (obj.date !== editingItem.date) {
-            let date = obj.date;
-            if (obj.date.includes(".")) date = date.split(".").join("/");
-            date = date
-                .split("/")
-                .map((x) => (x.startsWith("0") ? x.replace("0", "") : x))
-                .join("/");
-            editingItem.date = date;
-        }
-        if (obj.desc !== editingItem.description) editingItem.description = obj.desc;
-        if (editingItemType === "events") {
-            if (obj.variable !== editingItem.time) editingItem.time = obj.variable;
-        } else {
-            if (obj.variable !== editingItem.category) editingItem.category = obj.variable;
-        }
-
-        LS.save("calendarData", this.#state.data, "ref"); // pushing to LS; key, value, type = "ref" for reference
+        editEventOccurrence(obj);
     }
 
     // ================================================================================================
 
+    // fetching from the state, all events and occurences, upon start
     fetchEventOccurrences() {
         const fetched = LS.get("calendarData", "ref"); // key, type
         if (!fetched) return;
@@ -301,55 +166,21 @@ class Model {
 
     // ================================================================================================
 
+    // return just day numbers when a day of this month (which is a month that is displayed now) has either an event or occurence
     getThisMonthEventfulDays() {
-        // return just day numbers when a day of this month (which is a month that is displayed now) has either an event or occurence
-        const [yearShowing, monthShowing] = this.#state.monthToShow; // [2025, 2] -- 2 for February
-        const stateEvents = this.#state.data.events;
-        const stateOccurrences = this.#state.data.occurrences;
-
-        const eventDays =
-            stateEvents.length === 0
-                ? []
-                : stateEvents
-                      .filter((eventObj) => {
-                          const [date, month, year] = eventObj.date.split("/");
-                          if (+month === monthShowing && +year === yearShowing) return date;
-                      })
-                      .map((obj) => +obj.date.split("/")[0]); // if stateEvents is length 0, return [] -- if not, return only day numbers (dates)
-
-        const occurrenceDays =
-            stateOccurrences.length === 0
-                ? []
-                : stateOccurrences
-                      .filter((eventObj) => {
-                          const [date, month, year] = eventObj.date.split("/");
-                          if (+month === monthShowing && +year === yearShowing) return date;
-                      })
-                      .map((obj) => +obj.date.split("/")[0]); // same here
-
-        return [eventDays, occurrenceDays];
+        return getThisMonthEventfulDays();
     }
 
     // ================================================================================================
 
     // removing one entry and pushing it to LS
     deleteEntry(type, title, date) {
-        console.log(type, title, date);
-        if (type === "events") {
-            const index = this.getEvents().findIndex((entryObj) => entryObj.title === title && entryObj.date === date); // getting the index
-            if (index < 0) return console.error("negative index: not found");
-            this.#state.data.events.splice(index, 1); // removing by index
-        } else {
-            const index = this.getOccurrences().findIndex((entryObj) => entryObj.title === title && entryObj.date === date);
-            if (index < 0) return console.error("negative index: not found");
-            this.#state.data.occurrences.splice(index, 1);
-        }
-        LS.save("calendarData", this.#state.data, "ref"); // pushing to LS; key, value, type = "ref" for reference
+        deleteEntry(type, title, date);
     }
 
     // ================================================================================================
 
-    // getting all the data of 'el' from the state: 4 of its props
+    // getting all the data of 'el' from the state: 4 of its props (when editing)
     getEntryData(title, date, type) {
         const itemData = this.#state.data[type].find((itemObj) => itemObj.title === title && itemObj.date === date);
         const copy = JSON.parse(JSON.stringify(itemData)); // making a copy because '.find' returns a ref to the object found within the orig array, not a newly created object
@@ -359,84 +190,16 @@ class Model {
 
     // ================================================================================================
 
+    // getting some info about some day: if it has events, occurences, the temporal distance between now and this day, and what weekday it is
     getDayData(date) {
-        // 'date' is a string like '28/2/2025'
-        const eventsThisDay = this.getEvents().filter((eventObj) => eventObj.date === date); // getting all events this day
-        const occsThisDay = this.getOccurrences().filter((occObj) => occObj.date === date); // getting all occurrences this day
-        const temporalDistance = this.calcTemporalDistance(date); // calc-ing temporal distance between now and that day
-        const [aDate, month, year] = date.split("/").map((x) => +x);
-        const weekdayNum = new Date(year, month - 1, aDate).getDay();
-        const weekday = this.#state.weekdays[weekdayNum]; // getting the weekday
-        return [eventsThisDay, occsThisDay, temporalDistance, weekday];
+        return getDayData(date);
     }
 
     // ================================================================================================
 
-    /*calcTemporalDistance(dateString) {
-        ALL OF THIS IS JUST BLAZING RUBBISH
-        const [now, year, month, date, weekday, hours, minutes] = this.getNowTime();
-        const nowTime = now.getTime();
-        const [anotherDate, anotherMonth, anotherYear] = dateString.split("/").map((x) => +x); // 'someDate' is a string like '28/2/2025'
-        const targetDate = new Date(anotherYear, anotherMonth - 1, anotherDate);
-
-        const anotherTime = new Date(anotherYear, anotherMonth - 1, anotherDate, 0, 0).getTime();
-        const difference = (anotherTime - nowTime) / (1000 * 60 * 60 * 24); // in days
-        const daysRaw = Math.round(difference); // 'difference' in days
-
-        let yearsDifference = targetDate.getFullYear() - now.getFullYear();
-        let monthsDifference = targetDate.getMonth() - now.getMonth();
-        let daysDifference = targetDate.getDate() - now.getDate();
-
-        // Adjust negative days
-        if (daysDifference < 0) {
-            const prevMonthDays = new Date(targetDate.getFullYear(), targetDate.getMonth(), 0).getDate();
-            daysDifference += prevMonthDays;
-            monthsDifference -= 1; // Borrow from the previous month
-        }
-
-        // Adjust negative months
-        if (monthsDifference < 0) {
-            monthsDifference += 12;
-            yearsDifference -= 1; // Borrow from the previous year
-        }
-
-        // Calculate total days between now and target date
-        const totalDays = Math.round((targetDate - now) / (1000 * 60 * 60 * 24));
-
-        // *** Correct weeks and days ***
-        const weeksDifference = Math.floor(totalDays / 7); // Number of full weeks
-        const remainingDays = totalDays % 7; // Remaining days after full weeks
-
-        // *** Return all the results ***
-        console.log([daysRaw, yearsDifference, monthsDifference, weeksDifference, remainingDays]);
-        return [daysRaw, yearsDifference, monthsDifference, weeksDifference, remainingDays];
-    }*/
-
+    // dependency of 'getDayData' -- calculating the temporal distance between now and some day
     calcTemporalDistance(dateString) {
-        const [now, year, month, date, weekday, hours, minutes] = this.getNowTime();
-        const nowDate = new Date(year, month - 1, date, 0, 0, 0);
-        const [thenDate, thenMonth, thenYear] = dateString.split("/").map(Number);
-        const targetDate = new Date(thenYear, thenMonth - 1, thenDate);
-
-        // Calculate differences using date-fns functions
-        let years = differenceInYears(targetDate, nowDate);
-        let months = differenceInMonths(targetDate, nowDate) % 12; // Remaining months after years
-        let totalDays = differenceInDays(targetDate, nowDate);
-        let weeks = differenceInWeeks(targetDate, nowDate);
-        // if (weeks > 3) (weeks = weeks % 4), (months += 1);
-        // let weeks = Math.floor(totalDays / 7); // Full weeks
-        let days = totalDays % 7; // Remaining days after full weeks
-
-        const intervalObj = intervalToDuration({
-            start: nowDate,
-            end: targetDate,
-        });
-
-        const dayOfTheYear = getDayOfYear(new Date(thenYear, thenMonth - 1, thenDate));
-        const endOfTheYear = getDayOfYear(new Date(thenYear, 11, 31));
-        const yearCompletedPercent = ((dayOfTheYear / endOfTheYear) * 100).toFixed(1);
-
-        return [totalDays, years, months, weeks, days, intervalObj, yearCompletedPercent]; // Return the result as an array
+        return calcTemporalDistance(dateString);
     }
 
     // ================================================================================================
@@ -463,55 +226,32 @@ class Model {
 
     // ================================================================================================
 
-    // filtering occurrences by category
+    // filtering occurrences by category -- for Routines This Month block
     filterOccsByCat() {
-        const occs = this.getOccurrences();
-        const [yearShowing, monthShowing] = this.#state.monthToShow;
-
-        const withCategory = occs.filter((occObj) => {
-            const [date, month, year] = occObj.date.split("/");
-            return occObj.category && +month === monthShowing && +year === yearShowing; // all occurrences that have category assigned and happened in the observing month-year
-        });
-        const allCategories = withCategory.map((occObj) => occObj.category.toLowerCase().trim()); // a flat arr of strings: all cats
-
-        const map = {};
-        [...new Set(allCategories)].forEach((cat) => (map[cat] = 0)); // pre-filling the map
-        allCategories.forEach((catString, index, arr) => (map[catString] += 1)); // filling it properly to see how many times a set thing occurs in an array
-
-        const frequenciesSorted = Object.values(map).sort((a, b) => b - a);
-        const repeated = Object.keys(map).filter((cat) => map[cat] > 1); // getting those that are repeated more than once
-
-        const repeatedOccsObjs = occs.filter((occObj) => repeated.includes(occObj.category.toLowerCase())); // the objects of all those occurrences
-        // deleting those props that have 1 as value (repeated once)
-        Object.values(map).forEach((value, index) => {
-            const keys = Object.keys(map);
-            if (value === 1) delete map[keys[index]];
-        });
-
-        const daysInThisMonth = new Date(yearShowing, monthShowing, 1 - 1).getDate();
-        return [map, daysInThisMonth];
+        return filterOccsByCat();
     }
 
     // ================================================================================================
 
-    // get all dates that have this category
+    // get all dates that have this category (to highlight those dates/those day elements)
     getDates(categoryString) {
         const occs = this.getOccurrences();
-        let result = occs.filter((occObj) => occObj.category.toLowerCase() === categoryString).map((obj) => obj.date);
-        result = result.map((dateString) => dateString.split("/").reverse().join(","));
+        let result = occs.filter((occObj) => occObj.category.toLowerCase() === categoryString).map((obj) => obj.date); // an array of only dates
+        result = result.map((dateString) => dateString.split("/").reverse().join(",")); // formatting those dates a bit differently
         return result;
     }
 
     // ================================================================================================
 
-    // returns date today, num of events, num of occurrences
+    // returns date today, num of events, num of occurrences -- to update doc.title later
     getTodayData() {
         const dateToday = this.#state.nowDate.slice().reverse().join("/");
         const dateTodayShortened = this.#state.nowDate
             .slice()
             .reverse()
             .map((x) => (x.toString().length > 2 ? x.toString().slice(2) : x))
-            .join("/");
+            .join("/"); // not 2025 but just 25
+
         const events = this.getEvents();
         const occs = this.getOccurrences();
         const eventsToday = events.filter((eventObj) => eventObj.date === dateToday);
@@ -542,6 +282,7 @@ class Model {
 
     // ================================================================================================
 
+    // changing the accent color of the interface in state, LS; fetching it from LS; and fetching the state value
     changeAccentColor(value) {
         this.#state.accentColor = value;
         LS.save("calendarAccentColor", this.#state.accentColor, "prim"); // pushing to LS; key, value, type = "prim" for primitive type
@@ -557,15 +298,10 @@ class Model {
 
     // ================================================================================================
 
+    // exporting as JSON
     exportAsJson() {
         exportAsJson();
     }
-
-    exportAsTxt() {
-        exportAsTxt();
-    }
-
-    // ================================================================================================
 }
 
 export default Model;

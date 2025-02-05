@@ -5,10 +5,8 @@ import { Visual } from "../../Controller.js";
 // handle clicks in .calendar
 function handleCalendarClicks(handler) {
     Visual.calendarBlock.addEventListener("click", function (e) {
-        // console.log(e.target);
-
         if (e.target.closest(".calendar__header-btn")) {
-            // it was a click in calendar-header: on the prev or next btn
+            // it was a click in calendar-header: on the prev or next btn to show next/prev month
             const btn = e.target.closest(".calendar__header-btn");
             const btnType = btn.classList.contains("calendar__header-btn--next") ? "next" : "prev";
             handler(btnType);
@@ -21,7 +19,7 @@ function handleCalendarClicks(handler) {
         }
 
         if (e.target.closest(".calendar__day")) {
-            // it was a click on some day
+            // it was a click on some day element
             const btnType = "dayClick";
             const el = e.target.closest(".calendar__day");
             handler(btnType, el);
@@ -35,13 +33,15 @@ function handleCalendarClicks(handler) {
 function handleCalendarHoversIn(handler) {
     Visual.calendarBlock.addEventListener("mouseover", function (e) {
         if (e.target.closest(".routines__list-item-title")) {
+            // it was a hover in Routines block
             const text = e.target.closest(".routines__list-item-title").textContent.trim().toLowerCase();
             handler("habits", text);
             return;
         }
 
         if (!e.target.closest(".calendar__day")) return;
-        if (e.target.closest(".calendar__day").classList.contains("calendar__day--empty")) return;
+        if (e.target.closest(".calendar__day").classList.contains("calendar__day--empty")) return; // do nothing if it's an empty day
+        // it was a hover over some day in Calendar
         const hoveredDayEl = e.target.closest(".calendar__day");
         handler("day-block", hoveredDayEl);
     });
@@ -53,13 +53,15 @@ function handleCalendarHoversIn(handler) {
 function handleCalendarHoversOut(handler) {
     Visual.calendarBlock.addEventListener("mouseout", function (e) {
         if (e.target.closest(".routines__list-item-title")) {
+            // it was a hover-out in Routines block
             const text = e.target.closest(".routines__list-item-title").textContent.trim().toLowerCase();
             handler("habits", text);
             return;
         }
 
         if (!e.target.closest(".calendar__day")) return;
-        if (e.target.closest(".calendar__day").classList.contains("calendar__day--empty")) return;
+        if (e.target.closest(".calendar__day").classList.contains("calendar__day--empty")) return; // do nothing if it's an empty day
+        // it was a hover-out over some day in Calendar
         const hoveredDayEl = e.target.closest(".calendar__day");
         handler("day-block", hoveredDayEl);
     });
@@ -71,7 +73,7 @@ function handleCalendarHoversOut(handler) {
 function handleNonCalendarClicks(handler) {
     Visual.appFieldBlock.addEventListener("click", function (e) {
         if (e.target.closest(".app__form-switch-btn")) {
-            // it was a click on form switch btns: show Event or Occurrence form
+            // it was a click on form switch btns: show Event or Occurrence form (adding)
             const clickedBtnType = e.target.textContent.trim().toLowerCase();
             handler(clickedBtnType);
         }
@@ -82,7 +84,7 @@ function handleNonCalendarClicks(handler) {
         }
 
         if (e.target.closest(".ev-occ__switch-btn")) {
-            // it was a click on Events/Occurences btn in the block to the right from Calendar
+            // it was a click on Events/Occurences btns, in the block to the right from Calendar, to show all Events/Occs This Month
             const clickedBtnType = e.target.textContent.trim().toLowerCase();
             handler(clickedBtnType);
         }
@@ -103,7 +105,7 @@ function handleNonCalendarClicks(handler) {
 
 // ================================================================================================
 
-// handle form submission (when adding events)
+// handle form submission (when adding or editing things)
 function handleFormSubmission(handler) {
     document.querySelector("form").addEventListener("submit", function (e) {
         e.preventDefault();
@@ -115,10 +117,11 @@ function handleFormSubmission(handler) {
 
 // ================================================================================================
 
+// handle hover-ins in .app__field
 function handleAppfieldHoversIn(handler) {
     Visual.appFieldBlock.addEventListener("mouseover", function (e) {
         if (e.target.closest(".ev-occ__item")) {
-            const item = e.target.closest(".ev-occ__item");
+            const item = e.target.closest(".ev-occ__item"); // what item/element was hovered over
             handler(item.dataset.date);
         }
     });
@@ -126,10 +129,11 @@ function handleAppfieldHoversIn(handler) {
 
 // ================================================================================================
 
+// handle hover-outs in .app__field
 function handleAppfieldHoversOut(handler) {
     Visual.appFieldBlock.addEventListener("mouseout", function (e) {
         if (e.target.closest(".ev-occ__item")) {
-            const item = e.target.closest(".ev-occ__item");
+            const item = e.target.closest(".ev-occ__item"); // what item/element was hovered out
             handler(item.dataset.date);
         }
     });
@@ -141,7 +145,7 @@ function handleAppfieldHoversOut(handler) {
 function handleActionClicks(handler) {
     Visual.actionsBlock.addEventListener("click", function (e) {
         if (e.target.closest(".actions__action")) {
-            const type = e.target.closest(".actions__action").textContent.trim().toLowerCase();
+            const type = e.target.closest(".actions__action").textContent.trim().toLowerCase(); // what button was clicked
             handler(type);
         }
     });
@@ -149,9 +153,9 @@ function handleActionClicks(handler) {
 
 // ================================================================================================
 
-// react to file import
+// reacting to file import
 function reactToFileInput(handler) {
-    Visual.inputFileEl.addEventListener("change", handler); // reacting to the import event
+    Visual.inputFileEl.addEventListener("change", handler);
 }
 
 // ================================================================================================

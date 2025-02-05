@@ -1,7 +1,5 @@
 @use "./initial";
 
-// ================================================================================================
-
 .app {
     display: flex;
     justify-content: space-between;
@@ -21,8 +19,10 @@
             max-width: 500px;
         }
     }
+
     &__calendar {
     }
+
     &__field {
         // height: 600px;
         height: 84vh;
@@ -46,6 +46,7 @@
         flex-direction: column;
         row-gap: 30px;
     }
+
     &__form-header {
         position: relative;
         label {
@@ -66,6 +67,7 @@
             }
         }
     }
+
     &__form-title {
         font-size: 29px;
         padding-left: 10px;
@@ -75,6 +77,7 @@
             padding-top: 25px;
         }
     }
+
     &__form-switch {
         position: absolute;
         top: 0;
@@ -85,31 +88,38 @@
             top: -10px;
         }
     }
+
     &__form-switch-btn {
         padding: 5px 10px;
         font-size: 14px;
         transition: box-shadow 0.3s;
     }
+
     &__form-switch-btn--event {
     }
+
     &__form-switch-btn--occurence {
     }
+
     &__form-input-box {
         display: flex;
         column-gap: 30px;
     }
+
     &__form-input {
         width: 100%;
         @media (max-width: #{initial.$md1}px) {
             font-size: 13px;
         }
     }
+
     &__form-input--title {
     }
     &__form-input--date {
     }
     &__form-input--time {
     }
+
     &__form-input--description {
         height: 200px;
         min-height: 40px;
@@ -124,10 +134,12 @@
             max-height: 270px;
         }
     }
+
     &__form-btn {
         font-size: 18px;
         transition: box-shadow 0.3s;
     }
+
     &__form-btn-close {
         position: absolute;
         z-index: 1;
@@ -157,5 +169,3 @@
         }
     }
 }
-
-// ================================================================================================

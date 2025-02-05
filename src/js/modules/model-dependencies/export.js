@@ -4,9 +4,8 @@ import { Logic } from "../../Controller.js";
 
 // exporting as .json
 function exportAsJson() {
-    const data = Logic.getData();
+    const data = Logic.getData(); // getting the obj to export
     const now = new Date();
-
     const filename = `calendar-export--${now.getDate()}-${now.getMonth() + 1}-${now
         .getFullYear()
         .toString()
@@ -31,8 +30,9 @@ function exportAsJson() {
 
 // ================================================================================================
 // ================================================================================================
+// ================================================================================================
 
-// exporting as .txt
+// exporting as .txt is not finished (maybe later, if it's of any use...) 🔴
 function exportAsTxt() {
     const data = prepareForExport();
     return;
@@ -57,10 +57,10 @@ function exportAsTxt() {
 function prepareForExport() {
     const separator = `---------------------------------------------------------------------`;
 
-    console.log(Logic.getData());
+    // console.log(Logic.getData());
     return;
     const result = Logic.getData().map((obj) => {
-        console.log(obj);
+        // console.log(obj);
     });
     const notesNum = result.length;
     result.unshift(`Your Data (${notesNum})\n\n\n`, separator + "\n\n\n");
@@ -69,4 +69,4 @@ function prepareForExport() {
 
 // ================================================================================================
 
-export { exportAsJson, exportAsTxt };
+export { exportAsJson };

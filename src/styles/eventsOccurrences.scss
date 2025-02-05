@@ -10,10 +10,8 @@
         justify-content: space-between;
         column-gap: 20px;
         row-gap: 10px;
-        // margin-bottom: 24px;
         flex-wrap: wrap;
         background-color: var(--bg);
-        // background-color: #111;
         position: sticky;
         z-index: 10;
         padding-bottom: 20px;
@@ -47,18 +45,15 @@
         display: flex;
         flex-direction: column;
         row-gap: 15px;
-        // max-height: 525px;
-        // overflow-y: auto;
         padding-right: 7px;
         height: 100%;
-        // padding-top: 89px;
-        // padding-top: 48px;
     }
 
     &__item {
         padding: 10px 15px;
         background-color: #151515;
         position: relative;
+
         &:hover {
             background-color: #222;
             .ev-occ__item-btns {
@@ -66,6 +61,7 @@
                 visibility: visible;
             }
         }
+
         &-title {
             font-size: 19px;
             max-height: 44px;
@@ -75,21 +71,20 @@
             -webkit-box-orient: vertical;
             -webkit-line-clamp: 2; /* Limit to 2 lines */
         }
+
         &-minor-title {
             opacity: 0.5;
-            // float: left;
             font-size: 16px;
         }
+
         &-date,
         &-time {
             font-size: 14px;
         }
+
         &-description {
-            // float: right;
-            // display: inline-block;
             line-height: 1.25;
             font-size: 14px;
-            // max-height: 150px;
             max-height: 90px;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -97,6 +92,7 @@
             -webkit-box-orient: vertical;
             -webkit-line-clamp: 5; /* Limit to 5 lines */
         }
+
         &-btns {
             position: absolute;
             top: 1px;
@@ -107,11 +103,12 @@
             visibility: hidden;
             transition: all 0.2s;
         }
+
         &-btn {
             padding: 0;
             border: none;
             transition: none;
-            // font-size: 14px;
+
             svg {
                 width: 15px;
                 path {
@@ -135,6 +132,7 @@
         display: flex;
         align-items: center;
         column-gap: 20px;
+
         div {
             flex: 1 1 50%;
         }
@@ -143,6 +141,7 @@
     &__switch {
         display: flex;
         align-items: center;
+
         &-btn {
             background-color: var(--bg);
             font-size: 14px;
@@ -164,6 +163,7 @@
     &__hint {
         font-style: italic;
         opacity: 0.3;
+
         &:hover {
             opacity: 1;
         }

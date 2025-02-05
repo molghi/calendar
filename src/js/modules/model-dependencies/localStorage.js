@@ -36,7 +36,7 @@ class LS {
 
     // ================================================================================================
 
-    // retrieve all keys currently stored in local storage
+    // retrieve all key names currently stored in local storage
     getAll() {
         const storageKeys = Object.keys(localStorage);
         return storageKeys;
@@ -69,4 +69,3 @@ class LS {
 }
 
 export default new LS(); // I export and instantiate it right here, so I don't have to instantiate it where I import it
-// export default LS
