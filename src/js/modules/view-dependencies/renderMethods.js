@@ -8,12 +8,12 @@ function renderMessage(type, text) {
 
     const div = document.createElement("div");
     const typeClass = type === "success" ? "success" : type === "notification" ? "notification" : "error"; // determining the type
-    div.classList.add("message", "invisible", "moved-down", typeClass);
+    div.classList.add("message", "invisible", typeClass);
     div.innerHTML = `<div>${text}</div>`;
     Visual.containerEl.appendChild(div);
 
     setTimeout(() => {
-        div.classList.remove("invisible", "moved-down"); // some animation
+        div.classList.remove("invisible"); // some animation
     }, 300);
 
     if (type === "error") {

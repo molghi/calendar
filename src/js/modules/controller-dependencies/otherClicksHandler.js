@@ -66,7 +66,8 @@ function deleteOneEntry(el) {
 
     // re-rendering the entire Events/Occurrences block and the calendar element as well:
     // 'calcMonth' calcs how many days are in this month and return other things as well, ready to be rendered:
-    const [now, year, month, date, weekday, hours, minutes, daysInThisMonth, monthWord, yearTime] = Logic.calcMonth();
+    const [myYear, myMonth] = Logic.getMonthToShow();
+    const [now, year, month, date, weekday, hours, minutes, daysInThisMonth, monthWord, yearTime] = Logic.calcMonth(myYear, myMonth);
     // 'getThisMonthEventfulDays' returns an array of 2 arrays: event days (only dates/numbers) and occurrence days (same):
     const [eventDays, occurrenceDays] = Logic.getThisMonthEventfulDays();
     Visual.renderMonth([now, year, month, date, weekday, hours, minutes, daysInThisMonth, monthWord, yearTime], eventDays, occurrenceDays); // rendering the now month

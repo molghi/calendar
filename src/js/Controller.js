@@ -81,9 +81,9 @@ function runEventListeners() {
     Visual.handleActionClicks(actionsHandler); // handle clicks in .actions: change color, import or export
     Visual.reactToFileInput(processInput); // reacting to file input/import
 
-    Logic.everyMinuteTimer(() => {
-        renderThings(); // refreshing the interface if it is a new day
-    });
+    // Logic.everyMinuteTimer(() => {
+    //     renderThings(); // refreshing the interface every hour
+    // });
 }
 
 // ================================================================================================

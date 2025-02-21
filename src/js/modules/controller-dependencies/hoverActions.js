@@ -10,6 +10,11 @@ function handleCalendarHoversIn(actionType, el) {
         const elDate = el.dataset.date.split(",").reverse().join("/"); // getting the string of the date of 'el'
         const [eventsThisDay, occsThisDay, temporalDistance, weekday] = Logic.getDayData(elDate); // getting this day data
         Visual.renderDayBlock(elDate, eventsThisDay, occsThisDay, temporalDistance, weekday); // rendering hover-activated block on the right
+        const dayBlockHeight = parseInt(window.getComputedStyle(document.querySelector(".day-block")).height);
+        const dayBlockHeightPercent = (dayBlockHeight / window.innerHeight) * 100;
+        if (dayBlockHeightPercent > 84) {
+            document.querySelector(".day-block").classList.add("fadedOut");
+        }
         Visual.appFieldBlock.classList.add("overflow-hidden"); // if there is a vertical scroll, hide it while hovering over a day
         setTimeout(() => {
             Visual.appFieldBlock.scrollTop = 0; // scrolling to the top of the scrollable container

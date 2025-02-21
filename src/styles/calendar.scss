@@ -276,9 +276,13 @@
     &__now-btn-box {
         text-align: right;
         margin-top: 20px;
+        position: relative;
     }
 
     &__now-btn {
+        position: absolute;
+        top: 0;
+        right: 0;
         padding: 0;
         border: none;
         transition: none;

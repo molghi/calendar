@@ -52,17 +52,18 @@
 
 .message {
     border: 2px solid var(--white);
-    min-width: 200px;
-    width: 100%;
+    min-width: 300px;
+    max-width: 1000px;
     background-color: var(--bg);
     color: var(--white);
     text-shadow: 0 0 1px var(--white);
-    box-shadow: 0 0 5px var(--white);
+    box-shadow: 0 0 10px var(--white);
     padding: 10px 20px;
     font-size: 20px;
     position: absolute;
-    bottom: 20px;
-    left: 0;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
     transition: all 0.3s;
 }
 
@@ -70,12 +71,31 @@
     border-color: green;
     color: green;
     text-shadow: 0 0 1px green;
-    box-shadow: 0 0 5px green;
+    box-shadow: 0 0 10px green;
 }
 
 .error {
     border-color: red;
     color: red;
     text-shadow: 0 0 1px red;
-    box-shadow: 0 0 5px red;
+    box-shadow: 0 0 10px red;
+}
+
+// ================================================================================================
+
+.fadedOut {
+    position: relative;
+    &:after {
+        content: "";
+        position: absolute;
+        top: 80%;
+        left: 0;
+        background-color: rgba(#000, 0.85);
+        filter: blur(15px);
+        width: 200%;
+        transform: translateX(-23%);
+        height: 40%;
+        border-radius: 50%;
+        box-shadow: 0 0 80px #000;
+    }
 }

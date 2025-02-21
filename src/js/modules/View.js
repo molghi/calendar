@@ -228,6 +228,10 @@ class View {
 
     // highlighting or de-highlighting specific days in Calendar
     toggleHighlightDates(dataArr, toggleBooleanFlag) {
+        const todayString = `${new Date().getFullYear()},${new Date().getMonth() + 1},${new Date().getDate()}`;
+        const isTodayIncluded = dataArr.includes(todayString);
+        if (isTodayIncluded) document.querySelector(`.calendar [data-date="${todayString}"]`).classList.remove("dimmer"); // if today is included in dataArr, remove .dimmer
+
         const allDayEls = [...document.querySelectorAll(".calendar__day")];
         const neededEls = allDayEls.filter((el) => dataArr.includes(el.dataset.date));
         if (toggleBooleanFlag) {

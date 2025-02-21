@@ -48,6 +48,8 @@ class Model {
     getMonths = () => this.#state.months;
     getWeekdays = () => this.#state.weekdays;
 
+    getState = () => this.#state;
+
     // ================================================================================================
 
     // setting, getting and fetching whichever block is displayed on the right (the last clicked by a user) Events or Occurrences
@@ -131,12 +133,20 @@ class Model {
 
     // start the hourly timer
     everyHourTimer(handler) {
-        this.stopHourlyTimer(); // stop the hourly timer
+        // this.stopHourlyTimer(); // stop the hourly timer
 
-        this.#state.hourlyTimer = setInterval(() => {
-            handler();
-        }, 1000 * 60 * 60);
-        // }, 3000); // test
+        // this.#state.hourlyTimer = setInterval(() => {
+        //     handler();
+        // }, 1000 * 60 * 60);
+        // // }, 3000); // test
+
+        // TRYING THAT: every 60 sec
+        clearInterval(this.#state.everyMinTimer);
+
+        this.#state.everyMinTimer = setInterval(() => {
+            const [now, year, month, date, weekday, hours, minutes] = this.getNowTime();
+            if (minutes === 0) handler(); // refresh interface every hour
+        }, 60000);
     }
 
     // ================================================================================================
@@ -238,7 +248,8 @@ class Model {
 
         this.#state.everyMinTimer = setInterval(() => {
             const [now, year, month, date, weekday, hours, minutes] = this.getNowTime();
-            if (hours === 0 && minutes === 0) handler(); // if it is a new day, refresh interface
+            // if (hours === 0 && minutes === 0) handler(); // if it is a new day, refresh interface
+            if (minutes === 0) handler(); // refresh interface every hour
         }, 60000);
     }
 

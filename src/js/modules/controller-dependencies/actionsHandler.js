@@ -11,11 +11,11 @@ function actionsHandler(actionType) {
         Visual.changeAccentColor(safeColor); // changing in the UI
         Logic.changeAccentColor(safeColor); // changing in state/LS
         //
-    } else if (actionType === "import notes") {
+    } else if (actionType === "import") {
         alert(`NOTE:\nYou can import only JSON and it must be formatted exactly the same as the one you can export.`);
         Visual.inputFileEl.click(); // clicking the file import btn programatically, everything after that happens in the 'change' event listener
         //
-    } else if (actionType === "export notes") {
+    } else if (actionType === "export") {
         Logic.exportAsJson(); // exporting as JSON
     }
 }

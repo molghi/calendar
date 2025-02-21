@@ -11,15 +11,20 @@ function filterOccsByCat() {
     });
     const allCategories = withCategory.map((occObj) => occObj.category.toLowerCase().trim()); // a flat arr of strings: all categories
 
-    const map = {};
+    let map = {};
     [...new Set(allCategories)].forEach((cat) => (map[cat] = 0)); // pre-filling the map to increment properly below
     allCategories.forEach((catString, index, arr) => (map[catString] += 1)); // filling it properly to see how many times a set thing occurs in an array
 
-    Object.values(map).forEach((value, index) => {
-        // deleting those props that have 1 as value (repeated once)
-        const keys = Object.keys(map);
-        if (value === 1) delete map[keys[index]];
+    const routines = Object.entries(map).filter((entry) => entry[1] > 1);
+    map = {};
+    routines.forEach((entry) => {
+        map[entry[0]] = entry[1];
     });
+    // Object.values(map).forEach((value, index) => {
+    //     // deleting those props that have 1 as value (repeated once)
+    //     const keys = Object.keys(map);
+    //     if (value === 1) delete map[keys[index]];
+    // });
 
     const daysInThisMonth = new Date(yearShowing, monthShowing, 1 - 1).getDate();
     return [map, daysInThisMonth];
