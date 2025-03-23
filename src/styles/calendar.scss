@@ -1,8 +1,14 @@
 @use "./initial";
 
 .calendar {
-    max-width: calc(var(--dayBoxSize) * 7 + 2px);
+    // max-width: calc(var(--dayBoxSize) * 7 + 2px);
+    // max-width: calc(var(--dayBoxSize) * 7 + 2px + 0.7px);
     // 2px there above are for the border width on .days (1px left and 1px right)
+    // min-width: calc(var(--dayBoxSize) * 7 + 2px);
+    // var(--dayBoxSize) * 7 + 1px + 0.7px
+    min-width: calc(
+        var(--dayBoxSize) * 7 + 1px + 1.45px
+    ); // Adding a small buffer (0.7px) to avoid the calendar break on ctrl-minus: it was recalcing and setting 561.997px instead of 562px
 
     &__days {
         display: flex;
@@ -13,7 +19,8 @@
     &__day {
         border: 1px solid var(--accent);
         color: var(--accent);
-        width: var(--dayBoxSize);
+        // width: var(--dayBoxSize);
+        min-width: var(--dayBoxSize);
         max-width: var(--dayBoxSize);
         height: var(--dayBoxSize);
         max-height: var(--dayBoxSize);

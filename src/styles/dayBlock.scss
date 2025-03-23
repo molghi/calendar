@@ -9,6 +9,9 @@
     transition: all 0.3s;
     max-height: 84vh;
     overflow: hidden;
+    & * {
+        font-variant-ligatures: none;
+    }
 }
 
 .day-block {

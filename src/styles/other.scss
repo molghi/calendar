@@ -17,6 +17,11 @@
 
 .routines {
     margin-top: 40px;
+    padding-bottom: 20px;
+
+    & * {
+        font-variant-ligatures: none;
+    }
 
     &__title {
         font-size: 24px;
@@ -46,8 +51,8 @@
         display: flex;
         flex-direction: column;
         row-gap: 10px;
-        max-height: 158px;
-        overflow-y: auto;
+        // max-height: 158px;
+        // overflow-y: auto;
         padding: 10px;
         padding-left: 25px;
         // padding-left: 30px;
